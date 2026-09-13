@@ -149,7 +149,7 @@ function updateSelectedAccount(authUser){
             username = authUser.displayName
         }
         if(authUser.uuid != null){
-            document.getElementById('avatarContainer').style.backgroundImage = `url('https://mc-heads.net/body/${authUser.uuid}/right')`
+            document.getElementById('avatarContainer').style.backgroundImage = `url('https://mc-heads.net/avatar/${authUser.uuid}/100')`
         }
     }
     user_text.innerHTML = username
@@ -310,47 +310,13 @@ async function asyncSystemScan(effectiveJavaOptions, launchAfter = true){
     )
 
     if(jvmDetails == null) {
-        // If the result is null, no valid Java installation was found.
-        // Show this information to the user.
-        setOverlayContent(
-            Lang.queryJS('landing.systemScan.noCompatibleJava'),
-            Lang.queryJS('landing.systemScan.installJavaMessage', { 'major': effectiveJavaOptions.suggestedMajor }),
-            Lang.queryJS('landing.systemScan.installJava'),
-            Lang.queryJS('landing.systemScan.installJavaManually')
-        )
-        setOverlayHandler(() => {
-            setLaunchDetails(Lang.queryJS('landing.systemScan.javaDownloadPrepare'))
-            toggleOverlay(false)
-            
-            try {
-                downloadJava(effectiveJavaOptions, launchAfter)
-            } catch(err) {
-                loggerLanding.error('Unhandled error in Java Download', err)
-                showLaunchFailure(Lang.queryJS('landing.systemScan.javaDownloadFailureTitle'), Lang.queryJS('landing.systemScan.javaDownloadFailureText'))
-            }
-        })
-        setDismissHandler(() => {
-            $('#overlayContent').fadeOut(250, () => {
-                //$('#overlayDismiss').toggle(false)
-                setOverlayContent(
-                    Lang.queryJS('landing.systemScan.javaRequired', { 'major': effectiveJavaOptions.suggestedMajor }),
-                    Lang.queryJS('landing.systemScan.javaRequiredMessage', { 'major': effectiveJavaOptions.suggestedMajor }),
-                    Lang.queryJS('landing.systemScan.javaRequiredDismiss'),
-                    Lang.queryJS('landing.systemScan.javaRequiredCancel')
-                )
-                setOverlayHandler(() => {
-                    toggleLaunchArea(false)
-                    toggleOverlay(false)
-                })
-                setDismissHandler(() => {
-                    toggleOverlay(false, true)
-
-                    asyncSystemScan(effectiveJavaOptions, launchAfter)
-                })
-                $('#overlayContent').fadeIn(250)
-            })
-        })
-        toggleOverlay(true, true)
+        setLaunchDetails(Lang.queryJS('landing.systemScan.javaDownloadPrepare'))
+        try {
+            await downloadJava(effectiveJavaOptions, launchAfter)
+        } catch(err) {
+            loggerLanding.error('Unhandled error in automatic Java download', err)
+            showLaunchFailure(Lang.queryJS('landing.systemScan.javaDownloadFailureTitle'), err.displayable || Lang.queryJS('landing.systemScan.javaDownloadFailureText'))
+        }
     } else {
         // Java installation found, use this to launch the game.
         const javaExec = javaExecFromRoot(jvmDetails.path)
@@ -463,6 +429,33 @@ async function dlAsync(login = true) {
         loggerLaunchSuite.error('Unable to refresh distribution index.', err)
         showLaunchFailure(Lang.queryJS('landing.dlAsync.fatalError'), Lang.queryJS('landing.dlAsync.unableToLoadDistributionIndex'))
         return
+    }
+
+    window.nebulaDownloadUpdates = async function() {
+        const distro = await DistroAPI.refreshDistributionOrFallback()
+        const serverId = ConfigManager.getSelectedServer()
+        const repair = new FullRepair(
+            ConfigManager.getCommonDirectory(),
+            ConfigManager.getInstanceDirectory(),
+            ConfigManager.getLauncherDirectory(),
+            serverId,
+            DistroAPI.isDevMode()
+        )
+
+        repair.spawnReceiver()
+        try {
+            const invalidFileCount = await repair.verifyFiles(() => {})
+            if(invalidFileCount > 0) {
+                await repair.download(percent => {
+                    remote.getCurrentWindow().setProgressBar(percent / 100)
+                })
+            }
+            loggerLanding.info(`Nebula content update complete for ${serverId}.`)
+            return distro
+        } finally {
+            remote.getCurrentWindow().setProgressBar(-1)
+            repair.destroyReceiver()
+        }
     }
 
     const serv = distro.getServerById(ConfigManager.getSelectedServer())

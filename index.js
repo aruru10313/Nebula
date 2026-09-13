@@ -2,13 +2,12 @@ const remoteMain = require('@electron/remote/main')
 remoteMain.initialize()
 
 // Requirements
-const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron')
-const autoUpdater                       = require('electron-updater').autoUpdater
+const { app, BrowserWindow, dialog, ipcMain, Menu, shell } = require('electron')
 const ejse                              = require('ejs-electron')
+const { autoUpdater }                   = require('electron-updater')
 const fs                                = require('fs')
 const isDev                             = require('./app/assets/js/isdev')
 const path                              = require('path')
-const semver                            = require('semver')
 const { pathToFileURL }                 = require('url')
 const { AZURE_CLIENT_ID, MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR, SHELL_OPCODE } = require('./app/assets/js/ipcconstants')
 const LangLoader                        = require('./app/assets/js/langloader')
@@ -16,74 +15,6 @@ const LangLoader                        = require('./app/assets/js/langloader')
 // Setup Lang
 LangLoader.setupLanguage()
 
-// Setup auto updater.
-function initAutoUpdater(event, data) {
-
-    if(data){
-        autoUpdater.allowPrerelease = true
-    } else {
-        // Defaults to true if application version contains prerelease components (e.g. 0.12.1-alpha.1)
-        // autoUpdater.allowPrerelease = true
-    }
-    
-    if(isDev){
-        autoUpdater.autoInstallOnAppQuit = false
-        autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml')
-    }
-    if(process.platform === 'darwin'){
-        autoUpdater.autoDownload = false
-    }
-    autoUpdater.on('update-available', (info) => {
-        event.sender.send('autoUpdateNotification', 'update-available', info)
-    })
-    autoUpdater.on('update-downloaded', (info) => {
-        event.sender.send('autoUpdateNotification', 'update-downloaded', info)
-    })
-    autoUpdater.on('update-not-available', (info) => {
-        event.sender.send('autoUpdateNotification', 'update-not-available', info)
-    })
-    autoUpdater.on('checking-for-update', () => {
-        event.sender.send('autoUpdateNotification', 'checking-for-update')
-    })
-    autoUpdater.on('error', (err) => {
-        event.sender.send('autoUpdateNotification', 'realerror', err)
-    }) 
-}
-
-// Open channel to listen for update actions.
-ipcMain.on('autoUpdateAction', (event, arg, data) => {
-    switch(arg){
-        case 'initAutoUpdater':
-            console.log('Initializing auto updater.')
-            initAutoUpdater(event, data)
-            event.sender.send('autoUpdateNotification', 'ready')
-            break
-        case 'checkForUpdate':
-            autoUpdater.checkForUpdates()
-                .catch(err => {
-                    event.sender.send('autoUpdateNotification', 'realerror', err)
-                })
-            break
-        case 'allowPrereleaseChange':
-            if(!data){
-                const preRelComp = semver.prerelease(app.getVersion())
-                if(preRelComp != null && preRelComp.length > 0){
-                    autoUpdater.allowPrerelease = true
-                } else {
-                    autoUpdater.allowPrerelease = data
-                }
-            } else {
-                autoUpdater.allowPrerelease = data
-            }
-            break
-        case 'installUpdateNow':
-            autoUpdater.quitAndInstall()
-            break
-        default:
-            console.log('Unknown argument', arg)
-            break
-    }
-})
 // Redirect distribution index event from preloader to renderer.
 ipcMain.on('distributionIndexDone', (event, res) => {
     event.sender.send('distributionIndexDone', res)
@@ -130,7 +61,7 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGIN, (ipcEvent, ...arguments_) => {
         width: 520,
         height: 600,
         frame: true,
-        icon: getPlatformIcon('SealCircle')
+        icon: getPlatformIcon('nebula-icon')
     })
 
     msftAuthWindow.on('closed', () => {
@@ -181,7 +112,7 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGOUT, (ipcEvent, uuid, isLastAccount) => {
         width: 520,
         height: 600,
         frame: true,
-        icon: getPlatformIcon('SealCircle')
+        icon: getPlatformIcon('nebula-icon')
     })
 
     msftLogoutWindow.on('closed', () => {
@@ -222,12 +153,58 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGOUT, (ipcEvent, uuid, isLastAccount) => {
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 
+function setupLauncherUpdater() {
+    if(isDev || !app.isPackaged) {
+        return
+    }
+
+    autoUpdater.autoDownload = true
+    autoUpdater.autoInstallOnAppQuit = true
+    autoUpdater.on('update-available', (info) => {
+        win?.webContents.send('launcher-update-status', {
+            status: 'available',
+            version: info.version
+        })
+    })
+    autoUpdater.on('update-downloaded', async (info) => {
+        win?.webContents.send('launcher-update-status', {
+            status: 'downloaded',
+            version: info.version
+        })
+
+        const result = await dialog.showMessageBox(win, {
+            type: 'info',
+            buttons: ['지금 재시작', '나중에'],
+            defaultId: 0,
+            cancelId: 1,
+            title: 'Nebula 업데이트 준비 완료',
+            message: `Nebula ${info.version} 업데이트가 다운로드되었습니다.`,
+            detail: '지금 재시작하면 업데이트가 설치됩니다.'
+        })
+        if(result.response === 0) {
+            autoUpdater.quitAndInstall()
+        }
+    })
+    autoUpdater.on('error', (error) => {
+        win?.webContents.send('launcher-update-status', {
+            status: 'error',
+            message: error.message
+        })
+    })
+
+    setTimeout(() => {
+        autoUpdater.checkForUpdates().catch((error) => {
+            console.warn('Nebula launcher update check failed:', error.message)
+        })
+    }, 5000)
+}
+
 function createWindow() {
 
     win = new BrowserWindow({
         width: 980,
         height: 552,
-        icon: getPlatformIcon('SealCircle'),
+        icon: getPlatformIcon('nebula-icon'),
         frame: false,
         webPreferences: {
             preload: path.join(__dirname, 'app', 'assets', 'js', 'preloader.js'),
@@ -237,6 +214,12 @@ function createWindow() {
         backgroundColor: '#171614'
     })
     remoteMain.enable(win.webContents)
+    win.webContents.on('before-input-event', (event, input) => {
+        const key = input.key.toLowerCase()
+        if((input.control && input.shift && key === 'i') || key === 'f12') {
+            event.preventDefault()
+        }
+    })
 
     const data = {
         bkid: Math.floor((Math.random() * fs.readdirSync(path.join(__dirname, 'app', 'assets', 'images', 'backgrounds')).length)),
@@ -341,6 +324,7 @@ function getPlatformIcon(filename){
 
 app.on('ready', createWindow)
 app.on('ready', createMenu)
+app.on('ready', setupLauncherUpdater)
 
 app.on('window-all-closed', () => {
     // On macOS it is common for applications and their menu bar

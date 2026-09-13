@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title>Nebula</title>
+  <defs>
+    <linearGradient id="nebula" x1="32" y1="224" x2="224" y2="32" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#62d8ff"/>
+      <stop offset=".5" stop-color="#9b86ff"/>
+      <stop offset="1" stop-color="#f3c6ff"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <circle cx="128" cy="128" r="112" fill="#090d2a" stroke="#5148a6" stroke-width="4"/>
+  <path d="M128 30l12 76 64-42-42 64 76 12-76 12 42 64-64-42-12 76-12-76-64 42 42-64-76-12 76-12-42-64 64 42z" fill="url(#nebula)" opacity=".28" filter="url(#glow)"/>
+  <path d="M82 174V82h18l56 57V82h18v92h-18l-56-57v57z" fill="url(#nebula)" filter="url(#glow)"/>
+  <circle cx="58" cy="66" r="3" fill="#fff"/>
+  <circle cx="204" cy="188" r="3" fill="#fff"/>
+</svg>

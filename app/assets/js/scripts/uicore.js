@@ -11,9 +11,11 @@ const remote                         = require('@electron/remote')
 const isDev                          = require('./assets/js/isdev')
 const { LoggerUtil }                 = require('helios-core')
 const Lang                           = require('./assets/js/langloader')
+const ConfigManager                  = require('./assets/js/configmanager')
+const { DistroAPI }                  = require('./assets/js/distromanager')
 
 const loggerUICore             = LoggerUtil.getLogger('UICore')
-const loggerAutoUpdater        = LoggerUtil.getLogger('AutoUpdater')
+const loggerAutoUpdater        = LoggerUtil.getLogger('NebulaUpdater')
 
 // Log deprecation and process warnings.
 process.traceProcessWarnings = true
@@ -35,62 +37,36 @@ remote.getCurrentWebContents().on('devtools-opened', () => {
 webFrame.setZoomLevel(0)
 webFrame.setVisualZoomLevelLimits(1, 1)
 
-// Initialize auto updates in production environments.
-let updateCheckListener
-if(!isDev){
-    ipcRenderer.on('autoUpdateNotification', (event, arg, info) => {
-        switch(arg){
-            case 'checking-for-update':
-                loggerAutoUpdater.info('Checking for update..')
-                settingsUpdateButtonStatus(Lang.queryJS('uicore.autoUpdate.checkingForUpdateButton'), true)
-                break
-            case 'update-available':
-                loggerAutoUpdater.info('New update available', info.version)
-                
-                if(process.platform === 'darwin'){
-                    info.darwindownload = `https://github.com/dscalzi/HeliosLauncher/releases/download/v${info.version}/Helios-Launcher-setup-${info.version}${process.arch === 'arm64' ? '-arm64' : '-x64'}.dmg`
-                    showUpdateUI(info)
-                }
-                
-                populateSettingsUpdateInformation(info)
-                break
-            case 'update-downloaded':
-                loggerAutoUpdater.info('Update ' + info.version + ' ready to be installed.')
-                settingsUpdateButtonStatus(Lang.queryJS('uicore.autoUpdate.installNowButton'), false, () => {
-                    if(!isDev){
-                        ipcRenderer.send('autoUpdateAction', 'installUpdateNow')
-                    }
-                })
-                showUpdateUI(info)
-                break
-            case 'update-not-available':
-                loggerAutoUpdater.info('No new update found.')
-                settingsUpdateButtonStatus(Lang.queryJS('uicore.autoUpdate.checkForUpdatesButton'))
-                break
-            case 'ready':
-                updateCheckListener = setInterval(() => {
-                    ipcRenderer.send('autoUpdateAction', 'checkForUpdate')
-                }, 1800000)
-                ipcRenderer.send('autoUpdateAction', 'checkForUpdate')
-                break
-            case 'realerror':
-                if(info != null && info.code != null){
-                    if(info.code === 'ERR_UPDATER_INVALID_RELEASE_FEED'){
-                        loggerAutoUpdater.info('No suitable releases found.')
-                    } else if(info.code === 'ERR_XML_MISSED_ELEMENT'){
-                        loggerAutoUpdater.info('No releases found.')
-                    } else {
-                        loggerAutoUpdater.error('Error during update check..', info)
-                        loggerAutoUpdater.debug('Error Code:', info.code)
-                    }
-                }
-                break
-            default:
-                loggerAutoUpdater.info('Unknown argument', arg)
-                break
+let nebulaUpdateCheckListener
+let nebulaDistributionVersion = null
+
+async function checkNebulaUpdates(showResult = false) {
+    try {
+        const distro = await DistroAPI.refreshDistributionOrFallback()
+        const server = distro.getServerById(ConfigManager.getSelectedServer())
+        const modCount = server.modules.filter(module => module.rawModule.type === 'ForgeMod').length
+        nebulaDistributionVersion = distro.rawDistribution?.version || server.rawServer.version
+        loggerAutoUpdater.info(`Nebula content revision ${nebulaDistributionVersion}, ${modCount} client mods`)
+        if(showResult && typeof prepareUpdateTab === 'function') {
+            prepareUpdateTab({
+                version: nebulaDistributionVersion,
+                releaseName: Lang.queryJS('settings.updates.nebulaReadyTitle'),
+                releaseNotes: Lang.queryJS('settings.updates.nebulaReadyDescription', { modCount }),
+                nebula: true
+            })
         }
-    })
+        return { version: nebulaDistributionVersion, modCount }
+    } catch(err) {
+        loggerAutoUpdater.error('Nebula content update check failed.', err)
+        if(showResult && typeof prepareUpdateTab === 'function') {
+            prepareUpdateTab({ error: true })
+        }
+        throw err
+    }
 }
+
+window.checkNebulaUpdates = checkNebulaUpdates
+nebulaUpdateCheckListener = setInterval(() => checkNebulaUpdates(), 1800000)
 
 /**
  * Send a notification to the main process changing the value of
@@ -101,7 +77,7 @@ if(!isDev){
  * @param {boolean} val The new allow prerelease value.
  */
 function changeAllowPrerelease(val){
-    ipcRenderer.send('autoUpdateAction', 'allowPrereleaseChange', val)
+    loggerAutoUpdater.info(`Ignoring launcher prerelease setting: ${val}`)
 }
 
 function showUpdateUI(info){
@@ -111,7 +87,7 @@ function showUpdateUI(info){
         /*setOverlayContent('Update Available', 'A new update for the launcher is available. Would you like to install now?', 'Install', 'Later')
         setOverlayHandler(() => {
             if(!isDev){
-                ipcRenderer.send('autoUpdateAction', 'installUpdateNow')
+                window.nebulaDownloadUpdates?.()
             } else {
                 console.error('Cannot install updates in development environment.')
                 toggleOverlay(false)
@@ -198,16 +174,4 @@ document.addEventListener('readystatechange', function () {
 $(document).on('click', 'a[href^="http"]', function(event) {
     event.preventDefault()
     shell.openExternal(this.href)
-})
-
-/**
- * Opens DevTools window if you hold (ctrl + shift + i).
- * This will crash the program if you are using multiple
- * DevTools, for example the chrome debugger in VS Code. 
- */
-document.addEventListener('keydown', function (e) {
-    if((e.key === 'I' || e.key === 'i') && e.ctrlKey && e.shiftKey){
-        let window = remote.getCurrentWindow()
-        window.toggleDevTools()
-    }
 })

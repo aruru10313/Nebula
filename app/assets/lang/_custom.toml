@@ -1,20 +1,55 @@
 # Custom Language File for Launcher Customizer
 
 [ejs.app]
-title = "Helios Launcher"
+title = "Nebula 런처"
 
-[ejs.landing]
-mediaGitHubURL = "https://github.com/dscalzi/HeliosLauncher"
-mediaXURL = "#"
-mediaInstagramURL = "#"
-mediaYouTubeURL = "#"
-mediaDiscordURL = "https://discord.gg/zNWUXdt"
+[ejs.loginOptions]
+loginOptionsTitle = "로그인"
+loginWithMicrosoft = "Microsoft로 로그인"
+cancelButton = "취소"
 
 [ejs.settings]
-sourceGithubLink = "https://github.com/dscalZi/HeliosLauncher"
-supportLink = "https://github.com/dscalZi/HeliosLauncher/issues"
+navHeaderText = "설정"
+navAccount = "계정"
+navMinecraft = "마인크래프트"
+navMods = "모드"
+navJava = "Java"
+navLauncher = "런처"
+navAbout = "정보"
+navUpdates = "업데이트"
+navDone = "완료"
+addMicrosoftAccount = "+ Microsoft 계정 추가"
+tabAccountHeaderText = "계정"
+tabAccountHeaderDesc = "Microsoft 계정을 관리합니다."
+launcherUpdatesHeaderText = "Nebula 콘텐츠 업데이트"
+launcherUpdatesHeaderDesc = "서버팩과 모드의 최신 파일을 확인하고 다운로드합니다."
+checkForUpdates = "모드 업데이트 확인"
+whatsNew = "서버팩 변경 사항"
+updateReleaseNotes = "Nebula 콘텐츠 정보"
+noReleaseNotes = "서버에서 최신 모드와 파일 정보를 확인할 수 있습니다."
+sourceGithubLink = "#"
+supportLink = "https://discord.gg/f7ZwWCfUaA"
+
+[ejs.landing]
+usernamePlaceholder = "계정 없음"
+usernameEditButton = "계정 변경"
+settingsTooltip = "설정"
+serverStatus = "서버 상태"
+serverStatusPlaceholder = "확인 중..."
+launchButton = "플레이"
+launchButtonPlaceholder = "서버 선택"
+newsButton = "소식"
+mediaYouTubeURL = "https://www.youtube.com/channel/UCVog5egglbpsa3gHU_0HC1w"
+mediaChzzkURL = "https://chzzk.naver.com/f7cfac39277fbe58f0f7edc632e13d52"
+mediaDiscordURL = "https://discord.gg/f7ZwWCfUaA"
 
 [ejs.welcome]
-welcomeHeader = "WELCOME TO WESTEROSCRAFT"
-welcomeDescription = "Our mission is to recreate the universe imagined by author George RR Martin in his fantasy series, A Song of Ice and Fire.  Through the collaborative effort of thousands of community members, we have sought to create Westeros as accurately and precisely as possible within Minecraft.  The world we are creating is yours to explore.  Journey from Dorne to Castle Black, and if you aren’t afraid, beyond the Wall itself, but best not delay.  As the words of House Stark ominously warn: Winter is Coming."
-welcomeDescCTA = "You are just a few clicks away from Westeros."
+welcomeHeader = "NEBULA에 오신 것을 환영합니다"
+welcomeDescription = "별빛 아래에서 Minecraft 모험을 시작하세요. Nebula가 Java, 게임 파일, 모드와 서버 업데이트를 준비합니다."
+welcomeDescCTA = "다음 모험을 시작하세요."
+
+[js.auth.microsoft.error]
+noProfileTitle = "Minecraft 프로필이 없습니다"
+noProfileDesc = "이 Microsoft 계정에 Minecraft Java Edition 프로필이 없습니다. 공식 Minecraft 런처 또는 Microsoft Store에서 Java Edition을 구매·설치한 계정으로 로그인해 주세요."
+noXboxAccountTitle = "Xbox 계정이 필요합니다"
+noXboxAccountDesc = "Microsoft 계정에 Xbox 프로필이 없습니다. Xbox 서비스 프로필을 만든 뒤 다시 로그인해 주세요."

@@ -1,6 +1,6 @@
 <p align="center"><img src="./app/assets/images/SealCircle.png" width="150px" height="150px" alt="aventium softworks"></p>
 
-<h1 align="center">Helios Launcher</h1>
+<h1 align="center">Nebula Launcher</h1>
 
 <em><h5 align="center">(formerly Electron Launcher)</h5></em>
 
@@ -13,10 +13,9 @@
 
 ## Features
 
-* 🔒 Full account management.
-  * Add multiple accounts and easily switch between them.
-  * Microsoft (OAuth 2.0) + Mojang (Yggdrasil) authentication fully supported.
-  * Credentials are never stored and transmitted directly to Mojang.
+* 🔒 Microsoft OAuth account management.
+  * Add multiple Microsoft accounts and easily switch between them.
+  * Mojang password login is not exposed by Nebula.
 * 📂 Efficient asset management.
   * Receive client updates as soon as we release them.
   * Files are validated before launch. Corrupt or incorrect files will be redownloaded.
@@ -30,6 +29,8 @@
   * View the player count of the selected server.
 * Automatic updates. That's right, the launcher updates itself.
 *  View the status of Mojang's services.
+* Fixed client profile: Minecraft 1.20.1 with Forge 47.4.23.
+* Server mods are downloaded and checksum-validated automatically from the Nebula distribution server.
 
 This is not an exhaustive list. Download and install the launcher to gauge all it can do!
 
@@ -54,10 +55,10 @@ If you download from the [Releases](https://github.com/dscalzi/HeliosLauncher/re
 
 | Platform | File |
 | -------- | ---- |
-| Windows x64 | `Helios-Launcher-setup-VERSION.exe` |
-| macOS x64 | `Helios-Launcher-setup-VERSION-x64.dmg` |
-| macOS arm64 | `Helios-Launcher-setup-VERSION-arm64.dmg` |
-| Linux x64 | `Helios-Launcher-setup-VERSION.AppImage` |
+| Windows x64 | `Nebula-setup-VERSION.exe` |
+| macOS x64 | `Nebula-setup-VERSION-x64.dmg` |
+| macOS arm64 | `Nebula-setup-VERSION-arm64.dmg` |
+| Linux x64 | `Nebula-setup-VERSION.AppImage` |
 
 ## Console
 
@@ -123,6 +124,15 @@ Build for a specific platform.
 | Linux x64   | `npm run dist:linux` |
 
 Builds for macOS may not work on Windows/Linux and vice-versa.
+
+### Hosting server mods
+
+The launcher does not need access to the Minecraft server filesystem. Run
+`npm run generate:distribution` from the Nebula project with
+`NEBULA_ASSET_BASE_URL` and `NEBULA_SERVER_ADDRESS` set, then upload the
+generated `distribution/` directory to Oracle Cloud Object Storage or an
+Oracle VPS running Nginx. Replace the example distribution URL in
+`app/assets/js/distromanager.js` before building the installer.
 
 ---
 

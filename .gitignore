@@ -3,4 +3,8 @@
 /.vscode/
 /target/
 /logs/
-/dist/
+/dist
+distribution/distribution.json
+distribution/.distribution-state.json
+distribution/repo
+distribution/servers/

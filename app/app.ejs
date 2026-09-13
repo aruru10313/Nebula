@@ -1,4 +1,4 @@
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" http-equiv="Content-Security-Policy" content="script-src 'self' 'sha256-In6B8teKZQll5heMl9bS7CESTbGvuAt3VVV86BUQBDk='"/>
     <title><%= lang('app.title') %></title>
@@ -30,7 +30,6 @@
     <%- include('frame') %>
     <div id="main">
         <%- include('welcome') %>
-        <%- include('login') %>
         <%- include('waiting') %>
         <%- include('loginOptions') %>
         <%- include('settings') %>
@@ -40,8 +39,13 @@
     <div id="loadingContainer">
         <div id="loadingContent">
             <div id="loadSpinnerContainer">
-                <img id="loadCenterImage" src="assets/images/LoadingSeal.png">
-                <img id="loadSpinnerImage" class="rotating" src="assets/images/LoadingText.png">
+                <div id="nebulaLoadingStar" aria-hidden="true">
+                    <span class="loadingStarTrail loadingStarTrailOne"></span>
+                    <span class="loadingStarTrail loadingStarTrailTwo"></span>
+                    <span class="loadingStarTrail loadingStarTrailThree"></span>
+                    <span class="loadingStarCore"></span>
+                </div>
+                <div id="loadSpinnerImage" class="rotating" aria-hidden="true"></div>
             </div>
         </div>
     </div>

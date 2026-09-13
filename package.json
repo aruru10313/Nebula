@@ -1,14 +1,11 @@
 {
-  "name": "helioslauncher",
-  "version": "2.2.1",
-  "productName": "Helios Launcher",
-  "description": "Modded Minecraft Launcher",
-  "author": "Daniel Scalzi (https://github.com/dscalzi/)",
+  "name": "nebula-launcher",
+  "version": "2.0.0",
+  "productName": "Nebula Launcher",
+  "description": "A star-themed modded Minecraft launcher",
+  "author": "Aruru10 (Nebula) - based on HeliosLauncher by Daniel Scalzi",
   "license": "UNLICENSED",
-  "homepage": "https://github.com/dscalzi/HeliosLauncher",
-  "bugs": {
-    "url": "https://github.com/dscalzi/HeliosLauncher/issues"
-  },
+  "homepage": "https://github.com/aruru10313/Nebula",
   "private": true,
   "main": "index.js",
   "scripts": {
@@ -17,6 +14,8 @@
     "dist:win": "npm run dist -- -w",
     "dist:mac": "npm run dist -- -m",
     "dist:linux": "npm run dist -- -l",
+    "generate:distribution": "node tools/generate-distribution.js",
+    "watch:distribution": "node tools/watch-distribution.js",
     "lint": "eslint ."
   },
   "engines": {
@@ -28,7 +27,7 @@
     "discord-rpc-patch": "^4.0.1",
     "ejs": "^3.1.10",
     "ejs-electron": "^3.0.0",
-    "electron-updater": "^6.7.3",
+    "electron-updater": "^6.6.2",
     "fs-extra": "^11.3.3",
     "github-syntax-dark": "^0.5.0",
     "got": "^11.8.5",
@@ -47,6 +46,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dscalzi/HeliosLauncher.git"
+    "url": "git+https://github.com/aruru10313/Nebula.git"
   }
 }
