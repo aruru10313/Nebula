@@ -10,7 +10,7 @@
   "main": "index.js",
   "scripts": {
     "start": "electron .",
-    "dist": "if [ \"$GITHUB_REF_TYPE\" = \"tag\" ]; then electron-builder build --publish always; else electron-builder build; fi",
+    "dist": "node tools/build.js",
     "dist:win": "npm run dist -- -w",
     "dist:mac": "npm run dist -- -m",
     "dist:linux": "npm run dist -- -l",
