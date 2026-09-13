@@ -219,3 +219,7 @@ The best way to contact the developers is on Discord.
 [wiki]: https://github.com/dscalzi/HeliosLauncher/wiki 'wiki'
 [nebula]: https://github.com/dscalzi/Nebula 'dscalzi/Nebula'
 [v2branch]: https://github.com/dscalzi/HeliosLauncher/tree/ts-refactor 'v2 branch'
+
+## GitHub Releases
+
+Windows builds are published by the existing GitHub Actions workflow when a version tag is pushed.
