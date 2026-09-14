@@ -1,15 +1,13 @@
-<p align="center"><img src="./app/assets/images/SealCircle.png" width="150px" height="150px" alt="aventium softworks"></p>
+<p align="center"><img src="./app/assets/images/nebula-icon.png" width="150px" height="150px" alt="Nebula Launcher"></p>
 
 <h1 align="center">Nebula Launcher</h1>
 
-<em><h5 align="center">(formerly Electron Launcher)</h5></em>
+<p align="center">현실경제 Minecraft 서버를 위한 HeliosLauncher 기반 커스텀 런처</p>
 
-[<p align="center"><img src="https://img.shields.io/github/actions/workflow/status/dscalzi/HeliosLauncher/build.yml?branch=master&style=for-the-badge" alt="gh actions">](https://github.com/dscalzi/HeliosLauncher/actions) [<img src="https://img.shields.io/github/downloads/dscalzi/HeliosLauncher/total.svg?style=for-the-badge" alt="downloads">](https://github.com/dscalzi/HeliosLauncher/releases) <img src="https://forthebadge.com/images/badges/winter-is-coming.svg"  height="28px" alt="winter-is-coming"></p>
-
-<p align="center">Join modded servers without worrying about installing Java, Forge, or other mods. We'll handle that for you.</p>
-
-![Screenshot 1](https://i.imgur.com/6o7SmH6.png)
-![Screenshot 2](https://i.imgur.com/x3B34n1.png)
+Nebula는 Microsoft 계정 인증을 유지하면서 Java, Minecraft 1.20.1,
+Forge 47.4.23, 서버 모드와 업데이트를 자동으로 관리하는 독립 런처입니다.
+원본 HeliosLauncher의 라이선스와 저작권 표기는 `LICENSE.txt`에 보존되어
+있으며, Nebula의 변경 사항과 출처는 `NOTICE.md`에 정리되어 있습니다.
 
 ## Features
 
@@ -40,25 +38,32 @@ This is not an exhaustive list. Download and install the launcher to gauge all i
 
 ## Downloads
 
-You can download from [GitHub Releases](https://github.com/dscalzi/HeliosLauncher/releases)
+You can download from [Nebula GitHub Releases](https://github.com/aruru10313/Nebula/releases)
 
 #### Latest Release
 
-[![](https://img.shields.io/github/release/dscalzi/HeliosLauncher.svg?style=flat-square)](https://github.com/dscalzi/HeliosLauncher/releases/latest)
+[![](https://img.shields.io/github/release/aruru10313/Nebula.svg?style=flat-square)](https://github.com/aruru10313/Nebula/releases/latest)
 
 #### Latest Pre-Release
-[![](https://img.shields.io/github/release/dscalzi/HeliosLauncher/all.svg?style=flat-square)](https://github.com/dscalzi/HeliosLauncher/releases)
+[![](https://img.shields.io/github/release/aruru10313/Nebula/all.svg?style=flat-square)](https://github.com/aruru10313/Nebula/releases)
 
 **Supported Platforms**
 
-If you download from the [Releases](https://github.com/dscalzi/HeliosLauncher/releases) tab, select the installer for your system.
+If you download from the [Nebula Releases](https://github.com/aruru10313/Nebula/releases) tab, select the installer for your system.
 
 | Platform | File |
 | -------- | ---- |
 | Windows x64 | `Nebula-setup-VERSION.exe` |
-| macOS x64 | `Nebula-setup-VERSION-x64.dmg` |
-| macOS arm64 | `Nebula-setup-VERSION-arm64.dmg` |
+| macOS x64 | `Nebula-Launcher-setup-VERSION-x64.dmg` |
+| macOS arm64 | `Nebula-Launcher-setup-VERSION-arm64.dmg` |
 | Linux x64 | `Nebula-setup-VERSION.AppImage` |
+| Linux x64 (Debian/Ubuntu) | `Nebula-setup-VERSION.deb` |
+
+macOS builds use the hardened runtime configuration, but still must be signed
+and notarized with an Apple Developer certificate before broad distribution.
+Linux builds target x64; on systems without FUSE 2, use
+`--appimage-extract-and-run`, install the distribution's FUSE compatibility
+package, or use the Debian package.
 
 ## Console
 
@@ -92,8 +97,8 @@ This section details the setup of a basic developmentment environment.
 **Clone and Install Dependencies**
 
 ```console
-> git clone https://github.com/dscalzi/HeliosLauncher.git
-> cd HeliosLauncher
+> git clone https://github.com/aruru10313/Nebula.git
+> cd Nebula
 > npm install
 ```
 
@@ -187,19 +192,21 @@ Note that you **cannot** open the DevTools window while using this debug configu
 
 ---
 
-### Note on Third-Party Usage
+### Attribution and license
 
-Please give credit to the original author and provide a link to the original source. This is free software, please do at least this much.
-
-For instructions on setting up Microsoft Authentication, see https://github.com/dscalzi/HeliosLauncher/blob/master/docs/MicrosoftAuth.md.
+Nebula is a custom launcher based on HeliosLauncher by Daniel D. Scalzi.
+The upstream MIT license and copyright notice are preserved in `LICENSE.txt`;
+see `NOTICE.md` for the Nebula-specific modifications and third-party usage
+notes. For Microsoft authentication implementation details, see the upstream
+HeliosLauncher documentation.
 
 ---
 
 ## Resources
 
 * [Wiki][wiki]
-* [Nebula (Create Distribution.json)][nebula]
-* [v2 Rewrite Branch (Inactive)][v2branch]
+* [Nebula distribution tooling][nebula]
+* [HeliosLauncher upstream source][helios]
 
 The best way to contact the developers is on Discord.
 
@@ -216,9 +223,9 @@ The best way to contact the developers is on Discord.
 [rendererprocess]: https://electronjs.org/docs/tutorial/application-architecture#main-and-renderer-processes 'Renderer Process'
 [chromedebugger]: https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome 'Debugger for Chrome'
 [discord]: https://discord.gg/zNWUXdt 'Discord'
-[wiki]: https://github.com/dscalzi/HeliosLauncher/wiki 'wiki'
-[nebula]: https://github.com/dscalzi/Nebula 'dscalzi/Nebula'
-[v2branch]: https://github.com/dscalzi/HeliosLauncher/tree/ts-refactor 'v2 branch'
+[wiki]: https://github.com/aruru10313/Nebula/wiki 'Nebula wiki'
+[nebula]: https://github.com/aruru10313/Nebula 'Nebula'
+[helios]: https://github.com/dscalzi/HeliosLauncher 'HeliosLauncher upstream source'
 
 ## GitHub Releases
 

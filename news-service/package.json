@@ -1,0 +1,37 @@
+{
+  "name": "nebula-news-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Deployable Nebula announcements API and administration site",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "build:admin": "vite build && node scripts/obfuscate-admin.js",
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "db:push": "prisma db push",
+    "prisma:generate": "prisma generate",
+    "check": "node --check server.js && node --check scripts/obfuscate-admin.js"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/helmet": "^13.0.1",
+    "@fastify/multipart": "^9.4.0",
+    "@fastify/rate-limit": "^10.2.1",
+    "@fastify/static": "^10.1.3",
+    "@prisma/client": "^6.16.2",
+    "fastify": "^5.4.0",
+    "otplib": "^12.0.1",
+    "qrcode": "^1.5.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "javascript-obfuscator": "^4.1.1",
+    "prisma": "^6.16.2",
+    "vite": "^6.4.3"
+  }
+}

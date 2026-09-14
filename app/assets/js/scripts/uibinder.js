@@ -10,6 +10,7 @@ const AuthManager   = require('./assets/js/authmanager')
 
 let rscShouldLoad = false
 let fatalStartupError = false
+let uiInitializationStarted = false
 
 // Mapping of each view to their container IDs.
 const VIEWS = {
@@ -57,6 +58,7 @@ function getCurrentView(){
 
 async function showMainUI(data){
 
+    await waitForLandingBindings()
     await prepareSettings(true)
     updateSelectedServer(data.getServerById(ConfigManager.getSelectedServer()))
     refreshServerStatus()
@@ -102,7 +104,29 @@ async function showMainUI(data){
     })
 }
 
+function waitForLandingBindings(timeoutMs = 5000){
+    if(window.nebulaLandingReady){
+        return Promise.resolve()
+    }
+
+    return new Promise((resolve, reject) => {
+        const startedAt = Date.now()
+        const check = () => {
+            if(window.nebulaLandingReady){
+                resolve()
+            } else if(Date.now() - startedAt >= timeoutMs){
+                reject(new Error('Landing view did not finish initializing.'))
+            } else {
+                setTimeout(check, 25)
+            }
+        }
+        check()
+    })
+}
+
 function showFatalStartupError(){
+    if(uiInitializationStarted) return
+    uiInitializationStarted = true
     setTimeout(() => {
         $('#loadingContainer').fadeOut(250, () => {
             document.getElementById('overlayContainer').style.background = 'none'
@@ -118,6 +142,27 @@ function showFatalStartupError(){
             toggleOverlay(true)
         })
     }, 750)
+}
+
+async function initializeMainUI(){
+    if(uiInitializationStarted) return
+    if(document.readyState !== 'interactive' && document.readyState !== 'complete'){
+        rscShouldLoad = true
+        return
+    }
+
+    uiInitializationStarted = true
+    try {
+        const data = await DistroAPI.getDistribution()
+        syncModConfigurations(data)
+        ensureJavaSettings(data)
+        await showMainUI(data)
+    } catch(error) {
+        console.error('Unable to initialize the launcher UI.', error)
+        uiInitializationStarted = false
+        fatalStartupError = true
+        showFatalStartupError()
+    }
 }
 
 /**
@@ -407,8 +452,7 @@ document.addEventListener('readystatechange', async () => {
         if(rscShouldLoad){
             rscShouldLoad = false
             if(!fatalStartupError){
-                const data = await DistroAPI.getDistribution()
-                await showMainUI(data)
+                await initializeMainUI()
             } else {
                 showFatalStartupError()
             }
@@ -418,25 +462,39 @@ document.addEventListener('readystatechange', async () => {
 }, false)
 
 // Actions that must be performed after the distribution index is downloaded.
-ipcRenderer.on('distributionIndexDone', async (event, res) => {
-    if(res) {
-        const data = await DistroAPI.getDistribution()
-        syncModConfigurations(data)
-        ensureJavaSettings(data)
-        if(document.readyState === 'interactive' || document.readyState === 'complete'){
-            await showMainUI(data)
-        } else {
-            rscShouldLoad = true
-        }
-    } else {
-        fatalStartupError = true
-        if(document.readyState === 'interactive' || document.readyState === 'complete'){
+ipcRenderer.on('distributionIndexDone', (event, res) => {
+    // Let the remaining body scripts finish their top-level initialization
+    // before showMainUI accesses their lexical DOM bindings.
+    setTimeout(async () => {
+        try {
+            if(res) {
+                await initializeMainUI()
+            } else {
+                fatalStartupError = true
+                if(document.readyState === 'interactive' || document.readyState === 'complete'){
+                    showFatalStartupError()
+                } else {
+                    rscShouldLoad = true
+                }
+            }
+        } catch(err) {
+            console.error('Unable to initialize the launcher UI.', err)
+            fatalStartupError = true
             showFatalStartupError()
-        } else {
-            rscShouldLoad = true
         }
-    }
+    }, 0)
 })
+
+// Recover if the preload result arrives before the renderer listener is ready,
+// or if a stale cached distribution does not emit the completion event.
+setTimeout(() => {
+    if(uiInitializationStarted || document.readyState !== 'complete') return
+    if(fatalStartupError){
+        showFatalStartupError()
+    } else {
+        initializeMainUI()
+    }
+}, 5000)
 
 // Util for development
 async function devModeToggle() {

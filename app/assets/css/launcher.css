@@ -39,6 +39,15 @@ body {
     overflow: hidden;
 }
 
+html {
+    background: transparent;
+}
+
+body {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
 /* Reset p presets. */
 p {
     -webkit-margin-before: 0em;
@@ -69,7 +78,8 @@ body, button {
     display: flex;
     flex-direction: column;
     transition: background-color 1s ease;
-    /*background-color: rgba(0, 0, 0, 0.5);*/
+    background: rgba(8, 8, 22, 0.72);
+    border-radius: 16px 16px 0 0;
     -webkit-user-select: none;
 }
 
@@ -119,7 +129,6 @@ body, button {
     letter-spacing: 0.5px;
 }
 
-#image_seal,
 #loginImageSeal,
 #welcomeImageSeal,
 #settingsAboutLogo {
@@ -1256,9 +1265,12 @@ body, button {
 
 /* Selected server content container */
 .settingsSelServContainer {
-    background: rgba(0, 0, 0, 0.25);
-    width: 75%;
-    border-radius: 3px;
+    background: rgba(10, 14, 38, 0.58);
+    border: 1px solid rgba(139, 125, 255, 0.24);
+    width: 100%;
+    max-width: 75%;
+    box-sizing: border-box;
+    border-radius: 8px;
     display: flex;
     justify-content: space-between;
     margin: 15px 0px;
@@ -1269,7 +1281,9 @@ body, button {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 5px 0px;
+    gap: 6px;
+    padding: 10px;
+    overflow: hidden;
 }
 
 /* Wrapper container for the switch server button. */
@@ -1282,11 +1296,11 @@ body, button {
 /* Button to switch server configurations on the mods tab. */
 .settingsSwitchServerButton {
     opacity: 0;
-    border: 1px solid rgb(255, 255, 255);
-    color: rgb(255, 255, 255);
-    background: none;
+    border: 1px solid rgba(105, 217, 255, 0.55);
+    color: white;
+    background: rgba(139, 125, 255, 0.16);
     font-size: 12px;
-    border-radius: 3px;
+    border-radius: 8px;
     font-family: 'Avenir Medium';
     transition: 0.25s ease;
     cursor: pointer;
@@ -1294,14 +1308,14 @@ body, button {
 }
 .settingsSwitchServerButton:hover,
 .settingsSwitchServerButton:focus {
-    box-shadow: 0px 0px 20px rgb(255, 255, 255);
-    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 16px rgba(105, 217, 255, 0.35);
+    background: rgba(139, 125, 255, 0.3);
 }
 .settingsSwitchServerButton:active {
-    box-shadow: 0px 0px 20px rgb(187, 187, 187);
-    background: rgba(187, 187, 187, 0.25);
-    border: 1px solid rgb(187, 187, 187);
-    color: rgb(187, 187, 187);
+    box-shadow: 0 0 16px rgba(105, 217, 255, 0.2);
+    background: rgba(139, 125, 255, 0.4);
+    border: 1px solid rgba(105, 217, 255, 0.35);
+    color: rgba(255, 255, 255, 0.8);
 }
 .settingsSelServContainer:hover .settingsSwitchServerButton {
     opacity: 1;
@@ -2688,6 +2702,8 @@ input:checked + .toggleSwitchSlider:before {
 
 /* Main container. */
 #newsContainer {
+    background: rgba(4, 5, 18, 0.86);
+    backdrop-filter: blur(12px);
     position: absolute;
     top: 100%;
     height: 100%;
@@ -2838,6 +2854,13 @@ input:checked + .toggleSwitchSlider:before {
     max-width: 95%;
     display: block;
     margin: 0 auto;
+}
+
+.newsArticleImage {
+    max-height: 220px;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
 }
 #newsArticleContentScrollable a {
     color: rgba(202, 202, 202, 0.75);
@@ -3009,98 +3032,6 @@ input:checked + .toggleSwitchSlider:before {
 * Landing View (Top Styles) | Left Content
 * * */
 
-/* Logo image. */
-#image_seal {
-    height: 70px;
-    width: auto;
-    position: relative;
-    border: 2px solid white;
-    box-sizing: border-box;
-    border-radius: 50%;
-}
-
-/* Logo container styles. */
-#image_seal_container {
-    position: relative;
-    height: 70px;
-    width: 70px;
-    border-radius: 50%;
-    margin-top: 50px;
-}
-
-/* Logo container styles w/ update. */
-#image_seal_container[update]{
-    cursor: pointer
-}
-#image_seal_container[update]:before,
-#image_seal_container[update]:after {
-    cursor: pointer;
-    position: absolute;
-    content: '';
-    height: 100%;
-    width: 100%;
-    top: 0%;
-    left: 0%;
-    border-radius: 50%;
-    box-shadow: 0 0 15px #43c628;
-    animation: glow-grow 4s ease-out infinite;
-    background: rgba(0, 0, 0, 0.15);
-}
-#image_seal_container[update]:before {
-    animation-delay: 2s;
-}
-
-/* Update available tooltip styles. */
-#updateAvailableTooltip {
-    cursor: pointer;
-    visibility: hidden;
-    opacity: 0;
-    width: 100px;
-    height: 15px;
-    background-color: rgb(0, 0, 0);
-    color: #fff;
-    text-align: center;
-    border-radius: 4px;
-    padding: 2px;
-    position: absolute;
-    z-index: 1;
-    top: 115%;
-    left: -17.5px;
-    font-family: 'Avenir Medium';
-    font-size: 12px;
-    transition: visibility 0s linear 0.25s, opacity 0.25s ease;
-}
-#updateAvailableTooltip::after {
-    content: " ";
-    position: absolute;
-    left: 50%;
-    bottom: 100%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent rgb(0, 0, 0) transparent;
-}
-#image_seal_container[update]:hover #updateAvailableTooltip {
-    visibility: visible;
-    opacity: 1;
-    transition-delay: 0s;
-}
-
-/* Update available animation. */
-@keyframes glow-grow {
-    0% {
-        opacity: 0;
-        transform: scale(1);
-    }
-    80% {
-        opacity: 1;
-    }
-    100% {
-        transform: scale(1.5);
-        opacity: 0;
-    }
-}
-
 /* * *
 * Landing View (Bottom Styles) | Right Content
 * * */
@@ -3129,7 +3060,7 @@ input:checked + .toggleSwitchSlider:before {
     border-radius: 50%;
     border: 2px solid #cad7e1;
     box-sizing: border-box;
-    background: rgba(1, 2, 1, 0.5);
+    background-color: transparent;
     height: 70px;
     width: 70px;
     box-shadow: 0px 0px 10px 0px rgb(0, 0, 0);
@@ -3137,7 +3068,8 @@ input:checked + .toggleSwitchSlider:before {
     position: relative;
     background-position: center;
     background-repeat: no-repeat;
-    background-size: contain;
+    background-size: cover;
+    object-fit: cover;
 }
 
 /* Avatar edit overlay. */
@@ -3314,22 +3246,24 @@ input:checked + .toggleSwitchSlider:before {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     border-radius: 4px;
-    background: #00d4aa;
-    color: #07101c;
+    border: 1.5px solid #ffffff;
+    background: transparent;
+    color: #ffffff;
     font-family: 'Avenir Medium';
-    font-size: 9px;
+    font-size: 10px;
     font-weight: bold;
     transition: 0.25s ease;
+    box-sizing: border-box;
 }
 
 #chzzkURL:hover #chzzkLabel,
 #chzzkURL:focus #chzzkLabel {
-    background: #fff;
-    color: #00a98a;
-    box-shadow: 0 0 10px rgba(0, 212, 170, 0.75);
+    border-color: #00d4aa;
+    color: #00d4aa;
+    box-shadow: 0 0 10px rgba(0, 212, 170, 0.6);
 }
 
 button,
@@ -4366,5 +4300,1453 @@ body::after {
     72%, 100% {
         opacity: 0;
         translate: 86px 48px;
+    }
+}
+/*******************************************************************************
+ *                                                                             *
+ * Nebula Landing Polish (glass panels for top/bottom clusters)               *
+ *                                                                             *
+ ******************************************************************************/
+
+/* Give the top-right and bottom control clusters breathing room from the
+   window edge without disturbing their internal absolute positioning. */
+#landingContainer > #upper > #right {
+    box-sizing: border-box;
+    padding-right: 22px;
+    justify-content: flex-end;
+}
+#landingContainer > #lower > #left,
+#landingContainer > #lower > #right {
+    box-sizing: border-box;
+}
+#landingContainer > #lower > #right {
+    padding-right: 22px;
+    justify-content: flex-end;
+}
+
+/* Decorative glass panel behind the avatar/username/social cluster. Uses a
+   pseudo-element so the existing absolutely-positioned children (#user_text,
+   #avatarContainer, .mediaContainer icons) keep their original math. */
+#rightContainer {
+    z-index: 1;
+}
+#rightContainer:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: -14px;
+    left: -22px;
+    right: -14px;
+    bottom: -14px;
+    background: var(--nebula-panel);
+    border: 1px solid rgba(139, 125, 255, 0.24);
+    border-radius: 20px;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+}
+
+/* Content panels for the three bottom-bar clusters (server status, news
+   button, launch controls). Styled directly on the inner content elements
+   (which size to their own content) rather than the full-height column
+   wrapper, so each panel hugs its text/buttons instead of stretching to
+   fill the entire 26%-tall bottom row. */
+#landingContainer > #lower > #left #content {
+    background: var(--nebula-panel);
+    border: 1px solid rgba(139, 125, 255, 0.22);
+    border-radius: 16px;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(6px);
+    padding: 12px 22px;
+    box-sizing: border-box;
+}
+#landingContainer > #lower > #center #content {
+    background: var(--nebula-panel);
+    border: 1px solid rgba(139, 125, 255, 0.22);
+    border-radius: 16px;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(6px);
+    box-sizing: border-box;
+}
+#landingContainer > #lower > #right #launch_content {
+    background: var(--nebula-panel);
+    border: 1px solid rgba(139, 125, 255, 0.22);
+    border-radius: 20px;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(6px);
+    padding: 10px 18px;
+    box-sizing: border-box;
+}
+
+/* News button reads as a proper pill-shaped hit target inside its panel. */
+#newsButton {
+    padding: 6px 10px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+#newsButton:hover,
+#newsButton:focus {
+    background: rgba(139, 125, 255, 0.14);
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Server Listing (used in server select overlay and Settings > Mods         *
+ * summary card) - align with the Nebula card language.                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.serverListing,
+.accountListing {
+    box-sizing: border-box;
+    background: rgba(10, 14, 38, 0.58);
+    border: 1px solid rgba(139, 125, 255, 0.24);
+    border-radius: 8px;
+    padding: 6px 12px 6px 6px;
+}
+.serverListing[selected],
+.accountListing[selected] {
+    border-color: rgba(105, 217, 255, 0.55);
+    box-shadow: 0 0 0 1px rgba(105, 217, 255, 0.25), 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+.serverListing:hover,
+.serverListing:focus,
+.accountListing:hover,
+.accountListing:focus {
+    border-color: rgba(139, 125, 255, 0.45);
+    background: rgba(20, 20, 56, 0.65);
+}
+
+.serverListingImg {
+    border-radius: 6px;
+    border-color: rgba(139, 125, 255, 0.4);
+}
+
+.serverListingInfo {
+    align-items: center;
+    gap: 6px;
+}
+
+.serverListingDetails {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Recolor the flat green version tag into a Nebula-styled badge pill. */
+.serverListingVersion {
+    height: auto;
+    line-height: 1;
+    padding: 3px 7px;
+    border-radius: 10px;
+    background: none;
+    border: 1px solid rgba(105, 217, 255, 0.65);
+    color: var(--nebula-cyan);
+}
+.serverListingRevision {
+    color: rgba(255, 255, 255, 0.55);
+    padding: 3px 6px;
+}
+
+/* Keep the "main server" star from crowding/overflowing the card edge. */
+.serverListingStarWrapper {
+    margin-left: auto;
+    color: var(--nebula-cyan);
+}
+
+/* Required/optional mod rows: subtle hover + rounded card feel to match
+   the user mod browser cards from the Modrinth tab. */
+.settingsMod,
+.settingsDropinMod {
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+.settingsMod:hover,
+.settingsDropinMod:hover {
+    background: rgba(139, 125, 255, 0.08);
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Landing quick-access: Mods button                                          *
+ * Sits above the Settings gear so players can jump straight into the mod     *
+ * manager without navigating through the full settings screen.               *
+ *                                                                             *
+ ******************************************************************************/
+
+#modsMediaContainer {
+    position: relative;
+}
+
+/* Mods icon colors, mirrors the cyan accent used on mod badges. */
+#modsSVG {
+    fill: #ffffff;
+    height: 15px;
+    width: 15px;
+    transition: 0.25s ease;
+}
+.mediaButton:hover #modsSVG,
+.mediaButton:focus #modsSVG,
+.mediaButton:active #modsSVG {
+    fill: var(--nebula-cyan);
+    filter: drop-shadow(0 0 6px rgba(105, 217, 255, 0.75));
+}
+
+/* Mods tooltip, reuses the Settings tooltip layout. */
+#modsTooltip {
+    visibility: hidden;
+    opacity: 0;
+    width: 60px;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.75);
+    text-align: center;
+    border-radius: 4px;
+    position: absolute;
+    z-index: 1;
+    right: 130%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    line-height: 20px;
+    transition: visibility 0s linear 0.25s, opacity 0.25s ease;
+}
+#modsTooltip::after {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent rgba(0, 0, 0, 0.75);
+}
+#modsMediaContainer .mediaButton:hover #modsTooltip,
+#modsMediaContainer .mediaButton:focus #modsTooltip,
+#modsMediaContainer .mediaButton:active #modsTooltip {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Nebula Landing / MISTY layout                                               *
+ *                                                                             *
+ ******************************************************************************/
+
+#landingContainer {
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 0;
+    color: rgba(246, 244, 255, 0.94);
+    background: transparent !important;
+}
+
+#landingContainer::before {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(90deg, rgba(8, 8, 22, 0.94) 0%, rgba(12, 11, 32, 0.76) 28%, rgba(12, 11, 32, 0.44) 62%, rgba(8, 8, 22, 0.78) 100%),
+        linear-gradient(180deg, rgba(8, 8, 22, 0.4) 0%, transparent 44%, rgba(7, 7, 18, 0.88) 100%);
+}
+
+#landingContainer > #upper,
+#landingContainer > #lower,
+#landingContainer > #newsContainer {
+    z-index: 1;
+}
+
+#landingContainer > #upper {
+    height: 74%;
+    min-height: 0;
+    display: block;
+}
+
+#landingContainer > #upper > #left {
+    position: absolute;
+    z-index: 4;
+    left: 18px;
+    top: 0;
+    width: 62px;
+    height: 88px;
+    display: block;
+}
+
+#landingContainer > #upper > #content {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: flex-start;
+    padding: clamp(78px, 15vh, 142px) max(98px, 8vw) 0 clamp(116px, 15vw, 240px);
+}
+
+#landingHero {
+    max-width: 820px;
+}
+
+#landingMeta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.landingMetaChip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 25px;
+    box-sizing: border-box;
+    padding: 0 11px;
+    border: 1px solid rgba(191, 177, 255, 0.22);
+    border-radius: 999px;
+    background: rgba(28, 25, 58, 0.46);
+    color: rgba(232, 227, 255, 0.72);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    white-space: nowrap;
+    backdrop-filter: blur(10px);
+}
+
+#landingMeta .landingServerChip {
+    border-color: rgba(112, 214, 180, 0.28);
+    color: rgba(184, 239, 218, 0.88);
+}
+
+#landingMeta .landingServerChip::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    margin-right: 7px;
+    border-radius: 50%;
+    background: #aa9bff;
+    box-shadow: 0 0 10px rgba(170, 155, 255, 0.65);
+}
+
+#landingMeta #server_status_wrapper {
+    width: auto;
+    margin: 0;
+}
+
+#landingMeta #player_count {
+    margin-left: 7px;
+    color: inherit;
+    font-size: 9px;
+    font-weight: 700;
+    text-shadow: none;
+}
+
+#landingTitle {
+    margin: 0;
+    color: #f2efff;
+    font-size: clamp(52px, 7.2vw, 96px);
+    font-weight: 500;
+    letter-spacing: -3px;
+    line-height: 0.98;
+    text-shadow: 0 12px 44px rgba(7, 6, 20, 0.65);
+}
+
+#landingSubtitle {
+    margin: 22px 0 0;
+    color: rgba(232, 225, 255, 0.78);
+    font-size: clamp(17px, 1.8vw, 24px);
+    font-weight: 400;
+    letter-spacing: 0.2px;
+}
+
+#landingDescription {
+    max-width: 520px;
+    margin: 12px 0 0;
+    color: rgba(219, 214, 237, 0.5);
+    font-size: 12px;
+    letter-spacing: 0.35px;
+    line-height: 1.7;
+}
+
+#landingContainer > #upper > #right {
+    position: absolute;
+    z-index: 4;
+    left: auto;
+    right: 18px;
+    top: 88px;
+    width: 62px;
+    min-width: 62px;
+    max-width: 62px;
+    height: calc(100% - 88px);
+    display: block;
+    padding: 0;
+}
+
+#rightContainer {
+    top: 0;
+    left: 0;
+    width: 62px;
+    min-width: 62px;
+    max-width: 62px;
+    height: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+#rightContainer::before {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid rgba(186, 171, 255, 0.13);
+    border-radius: 28px;
+    background: rgba(15, 13, 36, 0.48);
+    box-shadow: 0 18px 42px rgba(3, 3, 13, 0.28);
+    backdrop-filter: blur(18px);
+}
+
+#rightContainer #user_content {
+    order: 3;
+    margin-top: auto;
+    padding: 8px 0 10px;
+}
+
+#rightContainer #user_text {
+    display: none;
+    right: calc(100% + 12px);
+    min-width: 0;
+    width: min(135px, calc(100vw - 110px));
+    max-width: 135px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#rightContainer #avatarContainer {
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(224, 218, 255, 0.66);
+    box-shadow: 0 0 18px rgba(131, 108, 255, 0.26);
+}
+
+#rightContainer #mediaContent {
+    order: 2;
+    width: 100%;
+    height: auto;
+    margin-top: 18px;
+    align-items: center;
+}
+
+#rightContainer #internalMedia,
+#rightContainer #externalMedia {
+    gap: 6px;
+    align-items: center;
+}
+
+#rightContainer .mediaContainer {
+    width: 34px;
+    height: 30px;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+#rightContainer .mediaContainer:hover,
+#rightContainer .mediaContainer:focus-within {
+    background: rgba(171, 150, 255, 0.12);
+}
+
+#rightContainer .mediaSVG {
+    width: 16px;
+    height: 16px;
+    fill: rgba(232, 227, 255, 0.72);
+}
+
+#rightContainer .mediaSVG:hover,
+#rightContainer .mediaURL:focus .mediaSVG,
+#rightContainer .mediaSVG:active {
+    width: 18px;
+    height: 18px;
+    fill: #f0ebff;
+}
+
+#rightContainer #homeSVG {
+    fill: rgba(206, 193, 255, 0.95);
+}
+
+#rightContainer .mediaDivider {
+    width: 18px;
+    height: 1px;
+    margin: 10px 0;
+    background: rgba(196, 184, 255, 0.2);
+}
+
+#rightContainer #settingsTooltip,
+#rightContainer #modsTooltip {
+    left: calc(100% + 10px);
+    right: auto;
+}
+
+#rightContainer #settingsTooltip::after,
+#rightContainer #modsTooltip::after {
+    right: 100%;
+    left: auto;
+    border-color: transparent rgba(0, 0, 0, 0.75) transparent transparent;
+}
+
+#rightContainer #modsSVG {
+    width: 16px;
+    height: 16px;
+    fill: rgba(232, 227, 255, 0.72);
+    filter: none;
+}
+
+#rightContainer #settingsSVG {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: rgba(232, 227, 255, 0.72);
+    stroke-width: 5px;
+}
+
+#rightContainer .mediaButton:hover #modsSVG,
+#rightContainer .mediaButton:focus #modsSVG,
+#rightContainer .mediaButton:active #modsSVG {
+    fill: #f0ebff;
+    filter: drop-shadow(0 0 5px rgba(190, 169, 255, 0.55));
+}
+
+#landingContainer > #lower {
+    height: 26%;
+    box-sizing: border-box;
+    align-items: flex-end;
+    padding: 0 5vw 28px 8vw;
+    gap: 18px;
+    background: linear-gradient(to top, rgba(7, 7, 18, 0.78), transparent);
+}
+
+#landingContainer > #lower > #left {
+    width: 0;
+    min-width: 0;
+    display: block;
+    overflow: hidden;
+}
+
+#landingContainer > #lower > #center {
+    width: auto;
+    height: auto;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#landingContainer > #lower > #center #content {
+    top: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(24, 21, 52, 0.54);
+    box-shadow: none;
+}
+
+#newsButton {
+    padding: 5px 13px;
+    border: 1px solid rgba(191, 177, 255, 0.18);
+    border-radius: 999px;
+    color: rgba(232, 227, 255, 0.7);
+}
+
+#newsButtonText {
+    font-size: 10px;
+    line-height: 22px;
+    letter-spacing: 1.5px;
+}
+
+#newsButtonSVG {
+    height: 8px;
+}
+
+#landingContainer > #lower > #right {
+    width: auto;
+    height: auto;
+    min-width: 0;
+    margin-left: auto;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0;
+}
+
+#landingContainer > #lower > #right #launch_content {
+    top: 0;
+    gap: 10px;
+    padding: 7px 9px 7px 12px;
+    border: 1px solid rgba(191, 177, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(24, 21, 52, 0.7);
+    box-shadow: 0 12px 28px rgba(3, 3, 13, 0.28);
+}
+
+#landingContainer > #lower > #right .bot_divider {
+    width: 1px;
+    height: 18px;
+    margin: 0 2px;
+    background: rgba(216, 205, 255, 0.18);
+}
+
+#launch_button {
+    min-width: 112px;
+    padding: 10px 18px;
+    border: 1px solid rgba(210, 192, 255, 0.42);
+    border-radius: 999px;
+    background: #d8ccff;
+    color: #1b1732;
+    font-size: 11px;
+    letter-spacing: 1.7px;
+    box-shadow: 0 8px 20px rgba(148, 124, 255, 0.2);
+}
+
+#launch_button:hover,
+#launch_button:focus {
+    background: #eee9ff;
+    color: #17132d;
+    box-shadow: 0 10px 26px rgba(181, 159, 255, 0.3);
+}
+
+#server_selection_button {
+    max-width: 145px;
+    padding: 5px 7px;
+    border: 0;
+    background: transparent;
+    color: rgba(232, 227, 255, 0.62);
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+#server_selection_button:hover,
+#server_selection_button:focus {
+    color: #f0ebff;
+    text-shadow: none;
+}
+
+#landingContainer > #lower > #right #launch_details {
+    top: 12px;
+}
+
+@media (max-width: 760px) {
+    #landingContainer > #upper > #left {
+        left: 10px;
+        right: auto;
+        width: 52px;
+    }
+
+    #landingContainer > #upper > #right {
+        left: auto;
+        right: 10px;
+        width: 62px;
+        min-width: 62px;
+        max-width: 62px;
+    }
+
+    #landingContainer > #upper > #content {
+        padding-left: 86px;
+        padding-right: 28px;
+    }
+
+    #landingContainer > #lower {
+        padding-left: 86px;
+        padding-right: 20px;
+    }
+
+    #landingTitle {
+        font-size: clamp(42px, 12vw, 68px);
+        letter-spacing: -2px;
+    }
+
+    #landingSubtitle {
+        font-size: 16px;
+    }
+
+    #landingDescription {
+        font-size: 11px;
+    }
+
+    #rightContainer {
+        width: 62px;
+        min-width: 62px;
+        max-width: 62px;
+    }
+
+    #rightContainer #avatarContainer {
+        width: 36px;
+        height: 36px;
+    }
+
+    #landingContainer > #lower > #center {
+        display: none;
+    }
+}
+
+@media (max-height: 560px) {
+    #rightContainer #mediaContent {
+        margin-top: 12px;
+    }
+
+    #rightContainer #internalMedia,
+    #rightContainer #externalMedia {
+        gap: 4px;
+    }
+
+    #rightContainer .mediaContainer {
+        height: 28px;
+    }
+
+    #rightContainer .mediaDivider {
+        margin: 6px 0;
+    }
+
+    #rightContainer #user_content {
+        padding-bottom: 6px;
+    }
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Nebula settings / shared landing tokens                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+#rightContainer #youtubeSVG,
+#rightContainer #discordSVG {
+    fill: rgba(232, 227, 255, 0.72);
+}
+
+#rightContainer #youtubeSVG:hover,
+#rightContainer #youtubeURL:focus #youtubeSVG,
+#rightContainer #discordURL:focus #discordSVG,
+#rightContainer #discordSVG:hover {
+    fill: #f0ebff;
+    filter: drop-shadow(0 0 5px rgba(190, 169, 255, 0.55));
+}
+
+#rightContainer #chzzkLabel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    box-sizing: border-box;
+    border: 1px solid rgba(232, 227, 255, 0.72);
+    border-radius: 5px;
+    color: rgba(232, 227, 255, 0.72);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+#rightContainer #chzzkURL:hover #chzzkLabel,
+#rightContainer #chzzkURL:focus #chzzkLabel {
+    border-color: #f0ebff;
+    color: #f0ebff;
+    box-shadow: 0 0 8px rgba(190, 169, 255, 0.35);
+}
+
+#settingsContainer {
+    display: flex;
+    background: transparent !important;
+    overflow: hidden;
+}
+
+#settingsContainerLeft {
+    flex: 0 0 228px;
+    width: 228px;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 18px 12px 20px;
+    border-right: 1px solid rgba(139, 125, 255, 0.2);
+    background: rgba(15, 13, 36, 0.66);
+    box-shadow: 12px 0 34px rgba(3, 3, 13, 0.2);
+    backdrop-filter: blur(18px);
+}
+
+#settingsNavContainer {
+    height: 100%;
+}
+
+#settingsNavHeader {
+    height: auto;
+    justify-content: flex-start;
+    padding: 12px 12px 24px;
+}
+
+#settingsNavHeaderText {
+    color: rgba(242, 239, 255, 0.94);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+}
+
+#settingsNavItemsContainer {
+    height: calc(100% - 47px);
+    display: flex;
+    justify-content: flex-start;
+    padding: 0 4px;
+}
+
+#settingsNavItemsContent {
+    width: 100%;
+    height: 100%;
+    gap: 6px;
+}
+
+.settingsNavItem {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 10px 14px 10px 18px;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    color: rgba(232, 227, 255, 0.52);
+    font-size: 11px;
+    letter-spacing: 0.7px;
+    text-align: left;
+    transition: 0.2s ease;
+}
+
+.settingsNavItem::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(232, 227, 255, 0.4);
+    transform: translateY(-50%);
+    transition: 0.2s ease;
+}
+
+.settingsNavItem:hover,
+.settingsNavItem:focus {
+    color: #f0ebff;
+    background: rgba(139, 125, 255, 0.1);
+    border-color: rgba(139, 125, 255, 0.16);
+    text-shadow: none;
+}
+
+.settingsNavItem[selected] {
+    color: #f0ebff;
+    background: rgba(56, 44, 120, 0.72);
+    border-color: rgba(139, 125, 255, 0.3);
+    box-shadow: 0 8px 20px rgba(3, 3, 13, 0.2);
+}
+
+.settingsNavItem[selected]::before {
+    width: 5px;
+    height: 5px;
+    background: var(--nebula-cyan);
+    box-shadow: 0 0 8px rgba(105, 217, 255, 0.75);
+}
+
+#settingsNavContentBottom {
+    position: static;
+    width: 100%;
+    margin-top: auto;
+}
+
+.settingsNavDivider {
+    width: calc(100% - 24px);
+    margin: 14px auto 16px;
+    background: rgba(139, 125, 255, 0.2);
+}
+
+#settingsNavDone {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 10px 14px;
+    border: 1px solid rgba(105, 217, 255, 0.32);
+    border-radius: 999px;
+    color: #f0ebff;
+    background: linear-gradient(135deg, var(--nebula-violet), #1e5d8c);
+    box-shadow: 0 8px 24px rgba(31, 33, 108, 0.28);
+    font-size: 11px;
+    letter-spacing: 1.1px;
+    text-align: center;
+}
+
+#settingsNavDone:hover,
+#settingsNavDone:focus {
+    background: linear-gradient(135deg, #5542af, #267da1);
+    box-shadow: 0 10px 30px rgba(105, 217, 255, 0.2);
+    text-shadow: none;
+}
+
+#settingsContainerRight {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    height: 100%;
+    background: rgba(10, 14, 38, 0.48) !important;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: blur(14px);
+}
+
+.settingsTab {
+    box-sizing: border-box;
+    padding: 42px clamp(28px, 5vw, 76px) 64px;
+}
+
+.settingsTab > *:first-child {
+    margin-top: 0;
+}
+
+.settingsTab > *:last-child {
+    margin-bottom: 42px;
+}
+
+.settingsTabHeader {
+    max-width: 880px;
+    margin-bottom: 26px;
+}
+
+.settingsTabHeaderText {
+    color: #f2efff;
+    font-size: clamp(24px, 2.5vw, 34px);
+    font-weight: 500;
+    letter-spacing: -0.8px;
+}
+
+.settingsTabHeaderDesc {
+    max-width: 650px;
+    margin-top: 8px;
+    color: rgba(219, 214, 237, 0.52);
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+.settingsAuthAccountTypeContainer,
+.settingsSelServContainer,
+#settingsMemoryContainer,
+.settingsFileSelContainer,
+#settingsAboutCurrentContainer,
+.settingsChangelogContainer,
+#settingsUpdateStatusContainer,
+#settingsModsContainer > div {
+    width: 100%;
+    max-width: 880px;
+    box-sizing: border-box;
+    border: 1px solid rgba(139, 125, 255, 0.22);
+    border-radius: 16px;
+    background: rgba(10, 14, 38, 0.58);
+    box-shadow: 0 14px 34px rgba(3, 3, 13, 0.22);
+    backdrop-filter: blur(12px);
+}
+
+.settingsAuthAccountTypeContainer,
+#settingsMemoryContainer,
+.settingsFileSelContainer,
+#settingsAboutCurrentContainer,
+.settingsChangelogContainer,
+#settingsUpdateStatusContainer {
+    margin: 12px 0 18px;
+}
+
+#settingsAboutCurrentContent {
+    padding: 18px;
+}
+
+#settingsAboutCurrentHeadline,
+#settingsAboutCurrentVersion {
+    border-color: rgba(139, 125, 255, 0.16);
+}
+
+#settingsAboutTitle,
+#settingsChangelogTitle,
+#settingsUpdateTitle {
+    color: rgba(242, 239, 255, 0.92);
+}
+
+.settingsFieldContainer {
+    width: 100%;
+    max-width: 880px;
+    box-sizing: border-box;
+    margin: 10px 0;
+    padding: 16px 18px;
+    border: 1px solid rgba(139, 125, 255, 0.2);
+    border-radius: 14px;
+    background: rgba(10, 14, 38, 0.52);
+    box-shadow: 0 10px 26px rgba(3, 3, 13, 0.16);
+}
+
+.settingsFieldTitle,
+.settingsMemoryHeader,
+.settingsFileSelTitle,
+.settingsModsHeader {
+    color: rgba(242, 239, 255, 0.9);
+    font-size: 12px;
+    letter-spacing: 0.35px;
+}
+
+.settingsFieldDesc,
+.settingsFileSelDesc,
+#settingsShaderpackDesc,
+#settingsMemoryDesc,
+#settingsUserModsNotice {
+    color: rgba(219, 214, 237, 0.52);
+    line-height: 1.65;
+}
+
+.settingsAuthAccountTypeHeader,
+.settingsMemoryContentItem,
+.settingsFileSelActions {
+    padding: 16px 18px;
+}
+
+.settingsCurrentAccounts,
+.settingsSelServContent,
+#settingsMemoryContent,
+.settingsFileSelContent,
+.settingsChangelogContent,
+#settingsUpdateStatusContent {
+    box-sizing: border-box;
+}
+
+.settingsAuthAccountTypeHeader {
+    border-bottom: 1px solid rgba(139, 125, 255, 0.16);
+}
+
+.settingsSwitchServerButton,
+.settingsAddAuthAccount,
+.settingsFileSelButton,
+#settingsDropinFileSystemButton,
+#settingsShaderpackButton,
+#settingsUpdateActionButton,
+.settingsStorageActions button,
+.settingsUpdateLauncherPanel button,
+#settingsUserModsCheckUpdates,
+#settingsUserModsUpdateAll,
+.settingsAboutButton {
+    box-sizing: border-box;
+    border: 1px solid rgba(105, 217, 255, 0.32);
+    border-radius: 999px;
+    color: #f0ebff;
+    background: linear-gradient(135deg, rgba(56, 44, 120, 0.9), rgba(30, 93, 140, 0.86));
+    box-shadow: 0 8px 24px rgba(31, 33, 108, 0.22);
+    font-size: 11px;
+    letter-spacing: 0.45px;
+}
+
+.settingsSwitchServerButton,
+.settingsAddAuthAccount,
+.settingsFileSelButton,
+#settingsShaderpackButton,
+#settingsUpdateActionButton,
+.settingsStorageActions button,
+.settingsUpdateLauncherPanel button,
+#settingsUserModsCheckUpdates,
+#settingsUserModsUpdateAll {
+    padding: 9px 15px;
+    cursor: pointer;
+}
+
+#settingsDropinFileSystemButton {
+    width: auto;
+    height: auto;
+    margin: 12px 18px;
+    padding: 10px 16px;
+    text-align: center;
+}
+
+#settingsUpdateActionButton {
+    display: inline-flex;
+    flex-direction: row;
+    padding-left: 15px;
+    text-align: center;
+}
+
+.settingsAboutButton {
+    display: inline-flex;
+    padding: 8px 13px;
+    text-decoration: none;
+}
+
+.settingsSwitchServerButton:hover,
+.settingsSwitchServerButton:focus,
+.settingsAddAuthAccount:hover,
+.settingsAddAuthAccount:focus,
+.settingsFileSelButton:hover,
+.settingsFileSelButton:focus,
+#settingsDropinFileSystemButton:hover,
+#settingsDropinFileSystemButton:focus,
+#settingsShaderpackButton:hover,
+#settingsShaderpackButton:focus,
+#settingsUpdateActionButton:hover,
+#settingsUpdateActionButton:focus,
+.settingsStorageActions button:hover,
+.settingsStorageActions button:focus,
+.settingsUpdateLauncherPanel button:hover,
+.settingsUpdateLauncherPanel button:focus,
+#settingsUserModsCheckUpdates:hover,
+#settingsUserModsCheckUpdates:focus,
+#settingsUserModsUpdateAll:hover,
+#settingsUserModsUpdateAll:focus,
+.settingsAboutButton:hover,
+.settingsAboutButton:focus {
+    border-color: rgba(105, 217, 255, 0.62);
+    background: linear-gradient(135deg, #5542af, #267da1);
+    box-shadow: 0 10px 30px rgba(105, 217, 255, 0.2);
+    color: #fff;
+    text-shadow: none;
+}
+
+#settingsContainer input[type=number],
+#settingsContainer input[type=text],
+#settingsContainer input[type=search],
+#settingsContainer select,
+.settingsSelectSelected {
+    box-sizing: border-box;
+    min-height: 34px;
+    border: 1px solid rgba(139, 125, 255, 0.25);
+    border-radius: 10px;
+    color: rgba(242, 239, 255, 0.9);
+    background: rgba(7, 7, 24, 0.58);
+}
+
+#settingsContainer input[type=number]:focus,
+#settingsContainer input[type=text]:focus,
+#settingsContainer input[type=search]:focus,
+#settingsContainer select:focus {
+    border-color: rgba(105, 217, 255, 0.65);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(105, 217, 255, 0.1);
+}
+
+#settingsContainer input[type=search],
+#settingsContainer select {
+    padding: 8px 12px;
+}
+
+.settingsStoragePanel,
+.settingsUpdateLauncherPanel {
+    margin: 12px 0 18px;
+    padding: 18px;
+    border: 1px solid rgba(139, 125, 255, 0.22);
+    border-radius: 16px;
+    background: rgba(10, 14, 38, 0.58);
+    box-shadow: 0 14px 34px rgba(3, 3, 13, 0.22);
+}
+
+.settingsStorageCandidate {
+    border-color: rgba(139, 125, 255, 0.26);
+    border-radius: 10px;
+    background: rgba(56, 44, 120, 0.5);
+}
+
+.toggleSwitchSlider {
+    border-color: rgba(139, 125, 255, 0.35);
+    background: rgba(139, 125, 255, 0.16);
+}
+
+input:checked + .toggleSwitchSlider {
+    border-color: rgba(105, 217, 255, 0.7);
+    background: linear-gradient(135deg, var(--nebula-violet), #1e5d8c);
+}
+
+.rangeSlider {
+    background: rgba(139, 125, 255, 0.2);
+}
+
+.rangeSliderBar {
+    background: linear-gradient(90deg, var(--nebula-violet), var(--nebula-cyan));
+}
+
+.rangeSliderTrack {
+    border: 1px solid rgba(242, 239, 255, 0.7);
+    background: #f0ebff;
+}
+
+#settingsUpdateVersionCheck {
+    background: var(--nebula-violet);
+    box-shadow: 0 0 12px rgba(139, 125, 255, 0.45);
+}
+
+#settingsUpdateVersionTitle {
+    color: var(--nebula-cyan);
+}
+
+@media (max-width: 760px) {
+    #settingsContainerLeft {
+        flex-basis: 174px;
+        width: 174px;
+    }
+
+    .settingsTab {
+        padding: 28px 20px 48px;
+    }
+
+    .settingsTabHeaderText {
+        font-size: 25px;
+    }
+}
+
+/* Window-safe layout and high-contrast news surface. */
+#frameBar {
+    flex: 0 0 22px;
+}
+
+body.window-maximized #frameBar {
+    border-radius: 0;
+}
+
+#landingContainer > #upper > #content,
+#landingHero,
+#landingContainer > #lower > #center,
+#landingContainer > #lower > #right {
+    min-width: 0;
+}
+
+#landingMeta {
+    max-width: 100%;
+}
+
+#landingTitle {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+#landingContainer > #lower {
+    min-height: 78px;
+    flex-wrap: nowrap;
+}
+
+#landingContainer > #lower > #center,
+#landingContainer > #lower > #right {
+    flex: 0 1 auto;
+}
+
+#newsContainer {
+    box-sizing: border-box;
+    padding: 20px clamp(18px, 5vw, 64px) 28px;
+    background: rgba(3, 4, 16, 0.9);
+    backdrop-filter: blur(16px);
+}
+
+#newsContent {
+    box-sizing: border-box;
+    width: min(100%, 940px);
+    height: auto;
+    min-height: min(240px, calc(100% - 48px));
+    max-height: min(82%, 430px);
+    gap: 18px;
+    overflow-x: hidden;
+    padding: 18px 20px;
+    border: 1px solid rgba(166, 151, 255, 0.34);
+    border-radius: 20px;
+    background: rgba(10, 11, 31, 0.96);
+    box-shadow: 0 22px 58px rgba(0, 0, 0, 0.48);
+}
+
+#newsStatusContainer {
+    flex: 0 1 clamp(170px, 28%, 250px);
+    width: auto;
+    height: auto;
+    min-height: 0;
+    align-self: stretch;
+    box-sizing: border-box;
+    padding: 18px 12px 18px 6px;
+    border-right: 1px solid rgba(166, 151, 255, 0.2);
+}
+
+#newsArticleContainer {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    display: flex;
+}
+
+#newsArticleContent {
+    height: auto;
+    min-height: 0;
+    max-height: 100%;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 14px;
+    background: rgba(20, 21, 48, 0.82);
+}
+
+#newsArticleContentScrollable {
+    box-sizing: border-box;
+    height: auto;
+    max-height: min(52vh, 340px);
+    min-height: 0;
+    padding: 18px 22px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    color: rgba(246, 244, 255, 0.94);
+    font-size: clamp(12px, 1.2vw, 15px);
+    line-height: 1.75;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+#newsArticleContentScrollable a {
+    color: #9fe7ff;
+}
+
+#newsArticleTitle {
+    color: #f5f2ff;
+    font-size: clamp(17px, 1.8vw, 23px);
+    word-break: keep-all;
+    overflow-wrap: normal;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.65);
+}
+
+#newsTitleContainer {
+    width: 100%;
+    max-width: 100%;
+}
+
+#newsArticleDate,
+#newsArticleAuthor {
+    color: #0b0b1c;
+    font-weight: 800;
+}
+
+#newsArticleAuthor {
+    color: #fff;
+    background: rgba(126, 100, 234, 0.9);
+}
+
+#newsNavigationStatus {
+    color: rgba(246, 244, 255, 0.9);
+    font-weight: 700;
+}
+
+#newsErrorContainer {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    box-sizing: border-box;
+    padding: 24px;
+    color: #f5f2ff;
+    background: rgba(3, 4, 16, 0.94);
+    text-align: center;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.newsErrorContent {
+    color: #f5f2ff;
+    font-size: clamp(16px, 2vw, 22px);
+    font-weight: 700;
+}
+
+#newsErrorRetry {
+    margin-top: 14px;
+    padding: 8px 16px;
+    border: 1px solid rgba(105, 217, 255, 0.5);
+    border-radius: 999px;
+    color: #dff8ff;
+    background: rgba(45, 66, 120, 0.72);
+}
+
+@media (max-height: 560px) {
+    #landingContainer > #upper {
+        height: 70%;
+    }
+
+    #landingContainer > #upper > #content {
+        padding-top: clamp(58px, 11vh, 92px);
+    }
+
+    #landingMeta {
+        margin-bottom: 14px;
+    }
+
+    #landingSubtitle {
+        margin-top: 12px;
+    }
+
+    #landingDescription {
+        margin-top: 7px;
+    }
+
+    #landingContainer > #lower {
+        height: 30%;
+        padding-bottom: 18px;
+    }
+}
+
+@media (max-width: 920px) {
+    #landingContainer > #upper > #left {
+        left: 10px;
+        width: 54px;
+    }
+
+    #landingContainer > #upper > #right {
+        left: auto;
+        right: 10px;
+        width: 62px;
+        min-width: 62px;
+        max-width: 62px;
+    }
+
+    #landingContainer > #upper > #content {
+        padding-left: 82px;
+        padding-right: 98px;
+    }
+
+    #landingContainer > #lower {
+        padding-left: 82px;
+        padding-right: 18px;
+        gap: 10px;
+    }
+
+    #landingTitle {
+        font-size: clamp(44px, 7vw, 72px);
+    }
+}
+
+@media (max-width: 980px) {
+    #newsContent {
+        flex-direction: column;
+        width: min(100%, 620px);
+        max-height: calc(100% - 48px);
+        min-height: 0;
+        overflow-y: auto;
+    }
+
+    #newsStatusContainer {
+        flex: 0 0 auto;
+        width: 100%;
+        height: auto;
+        padding: 4px 4px 14px;
+        border-right: 0;
+        border-bottom: 1px solid rgba(166, 151, 255, 0.2);
+    }
+
+    #newsStatusContent {
+        align-items: flex-start;
+    }
+
+    #newsTitleContainer {
+        width: 100%;
+    }
+
+    #newsArticleTitle {
+        text-align: left;
+    }
+
+    #newsArticleContainer {
+        flex: 0 1 auto;
+        width: 100%;
+        min-height: 0;
+    }
+
+    #newsArticleContentScrollable {
+        max-height: min(42vh, 300px);
     }
 }

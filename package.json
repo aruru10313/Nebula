@@ -1,10 +1,10 @@
 {
   "name": "nebula-launcher",
-  "version": "2.0.2",
+  "version": "2.0.5",
   "productName": "Nebula Launcher",
-  "description": "A star-themed modded Minecraft launcher",
+  "description": "A custom star-themed Minecraft launcher based on HeliosLauncher",
   "author": "Aruru10 (Nebula) - based on HeliosLauncher by Daniel Scalzi",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "homepage": "https://github.com/aruru10313/Nebula",
   "private": true,
   "main": "index.js",

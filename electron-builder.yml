@@ -2,7 +2,7 @@ appId: 'com.nebula.launcher'
 productName: 'Nebula Launcher'
 artifactName: 'Nebula-setup-${version}.${ext}'
 
-copyright: 'Copyright © 2026 Nebula'
+copyright: 'Nebula Launcher © 2026 Aruru. Based on HeliosLauncher by Daniel D. Scalzi.'
 
 asar: true
 compression: 'maximum'
@@ -38,10 +38,18 @@ mac:
         - 'arm64'
   artifactName: '${productName}-setup-${version}-${arch}.${ext}'
   category: 'public.app-category.games'
+  hardenedRuntime: true
+  gatekeeperAssess: false
 
 # Linux Configuration
 linux: 
-  target: 'AppImage'
+  target:
+    - target: 'AppImage'
+      arch:
+        - 'x64'
+    - target: 'deb'
+      arch:
+        - 'x64'
   maintainer: 'Nebula'
   vendor: 'Nebula'
   synopsis: 'Star-themed modded Minecraft launcher'

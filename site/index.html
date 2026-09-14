@@ -9,33 +9,62 @@
 <body>
     <main class="shell">
         <nav class="nav">
-            <a class="brand" href="./">NEBULA</a>
+            <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">✦</span>NEBULA</a>
             <a href="#downloads">다운로드</a>
+            <a href="#announcements">소식</a>
             <a href="https://github.com/aruru10313/Nebula" target="_blank" rel="noreferrer">GitHub</a>
         </nav>
         <section class="hero">
-            <p class="eyebrow">MINECRAFT 1.20.1 · FORGE 47.4.23</p>
-            <h1>나만의 방식으로<br><span>세계를 시작하세요.</span></h1>
-            <p class="lead">Nebula는 현실경제 서버를 위한 Minecraft 런처입니다. 설치부터 업데이트와 모드 관리까지 한 곳에서 처리하세요.</p>
-            <a class="primary" href="#downloads">런처 다운로드</a>
+            <div class="hero-content">
+                <div class="hero-tags" aria-label="지원 버전">
+                    <span class="tag">MC 1.20.1</span>
+                    <span class="tag">FORGE 47.4.23</span>
+                    <span class="tag tag-muted">현실경제 서버</span>
+                </div>
+                <p class="eyebrow">NEBULA LAUNCHER</p>
+                <h1>나만의 방식으로<br><span>세계를 시작하세요.</span></h1>
+            <p class="lead">Nebula는 현실경제 서버를 위한 Minecraft Launcher입니다. 설치부터 업데이트와 모드 관리까지 한 곳에서 처리하세요.</p>
+                <div class="hero-actions">
+                    <a class="primary" href="#downloads">런처 다운로드 <span aria-hidden="true">↗</span></a>
+                    <a class="text-link" href="#announcements">최근 소식 보기 <span aria-hidden="true">↓</span></a>
+                </div>
+            </div>
         </section>
         <section id="downloads" class="downloads">
             <div class="section-heading">
-                <p class="eyebrow">시작하기</p>
-                <h2>사용 중인 운영체제를 선택하세요</h2>
+                <div>
+                    <p class="eyebrow">GET STARTED</p>
+                    <h2>사용 중인 운영체제를<br class="mobile-break"> 선택하세요</h2>
+                </div>
+                <p class="section-note">모든 빌드는 Minecraft 1.20.1<br>Forge 47.4.23 기준입니다.</p>
             </div>
             <div class="cards">
-                <a class="card" data-platform="windows" href="https://github.com/aruru10313/Nebula/releases/latest/download/Nebula-setup-2.0.0.exe">
-                    <span class="icon">▣</span><strong>Windows</strong><small>Windows 10/11 · x64</small><span class="download">.exe 다운로드 →</span>
+                <a class="card" data-platform="windows" href="https://github.com/aruru10313/Nebula/releases/latest/download/Nebula-setup-2.0.2.exe">
+                    <span class="recommended-label" hidden>현재 OS · 권장</span>
+                    <span class="icon" aria-hidden="true"><svg class="platform-icon" viewBox="0 0 64 64" width="64" height="64" fill="currentColor"><path d="M4 9 29 5v25H4V9Zm31-5 25-4v34H35V4ZM4 34h25v25L4 55V34Zm31 0h25v34l-25-4V34Z"/></svg></span>
+                    <strong>Windows</strong><small>Windows 10/11 · x64</small><span class="download">.exe 다운로드 <span aria-hidden="true">↗</span></span>
                 </a>
-                <a class="card" data-platform="macos" href="https://github.com/aruru10313/Nebula/releases/latest/download/Nebula%20Launcher-setup-2.0.0-x64.dmg">
-                    <span class="icon">◐</span><strong>macOS</strong><small>Intel 및 Apple Silicon</small><span class="download">.dmg 다운로드 →</span>
+                <a class="card" data-platform="macos" href="https://github.com/aruru10313/Nebula/releases/latest/download/Nebula-Launcher-setup-2.0.2-x64.dmg">
+                    <span class="recommended-label" hidden>현재 OS · 권장</span>
+                    <span class="icon" aria-hidden="true"><svg class="platform-icon" viewBox="0 0 64 64" width="64" height="64" fill="currentColor"><path d="M44.5 33.8c0-7.2 5.8-10.7 6.1-10.9-3.3-4.8-8.4-5.5-10.2-5.6-4.3-.5-8.4 2.6-10.6 2.6-2.2 0-5.6-2.5-9.2-2.4-4.7.1-9 2.7-11.4 6.8-4.9 8.4-1.2 20.8 3.5 27.6 2.3 3.3 5 7 8.6 6.9 3.5-.1 4.8-2.2 9-2.2 4.2 0 5.3 2.2 8.9 2.1 3.7-.1 6-3.4 8.3-6.7 2.7-3.9 3.8-7.7 3.9-7.9-.1 0-6.8-2.6-6.9-10.3ZM37.5 12.7c1.9-2.3 3.2-5.5 2.8-8.7-2.8.1-6.2 1.9-8.1 4.2-1.8 2-3.3 5.3-2.9 8.4 3.1.2 6.3-1.6 8.2-3.9Z"/></svg></span>
+                    <strong>macOS</strong><small>Intel 및 Apple Silicon</small><span class="download">.dmg 다운로드 <span aria-hidden="true">↗</span></span>
                 </a>
-                <a class="card" data-platform="linux" href="https://github.com/aruru10313/Nebula/releases/latest/download/Nebula-setup-2.0.0.AppImage">
-                    <span class="icon">◇</span><strong>Linux</strong><small>Ubuntu 및 주요 배포판</small><span class="download">.AppImage 다운로드 →</span>
+                <a class="card" data-platform="linux" href="https://github.com/aruru10313/Nebula/releases/latest/download/Nebula-setup-2.0.2.AppImage">
+                    <span class="recommended-label" hidden>현재 OS · 권장</span>
+                    <span class="icon" aria-hidden="true"><svg class="platform-icon" viewBox="0 0 64 64" width="64" height="64" fill="currentColor"><path d="M32 6c-8 0-13 7-13 17v8c0 5-3 8-8 12-3 3-2 8 2 9 4 1 8 0 12-2 2 2 5 3 9 3s7-1 9-3c4 2 8 3 12 2 4-1 5-6 2-9-5-4-8-7-8-12v-8C45 13 40 6 32 6Z"/><path fill="#070a1d" d="M23 29a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm18 0a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM27 39c3 2 7 2 10 0-1 6-9 6-10 0Z"/></svg></span>
+                    <strong>Linux</strong><small>Ubuntu 및 주요 배포판</small><span class="download">.AppImage 다운로드 <span aria-hidden="true">↗</span></span>
                 </a>
             </div>
-            <p class="release">최신 버전: <strong>2.0.0</strong> · 다운로드 파일은 GitHub Releases에서 제공됩니다.</p>
+            <p class="release">최신 버전: <strong>2.0.2</strong> · 다운로드 파일은 GitHub Releases에서 제공됩니다.</p>
+        </section>
+        <section id="announcements" class="announcements">
+            <div class="section-heading">
+                <p class="eyebrow">소식</p>
+                <h2>Nebula 공지</h2>
+            </div>
+            <div id="announcement-list" class="announcement-list" aria-live="polite">
+                <p class="muted">공지를 불러오는 중입니다.</p>
+            </div>
         </section>
         <footer>
             <div><strong>© 2026 Nebula</strong><span>Created by <a href="https://github.com/aruru10313" target="_blank" rel="noreferrer">aruru</a></span><span>Built for the 현실경제 server</span></div>

@@ -30,6 +30,20 @@ LangLoader.setupLanguage()
 
 let distributionIndexResult = null
 let pageFinishedLoading = false
+let rendererReady = false
+let distributionIndexSent = false
+const LAUNCHER_DEFAULT_WIDTH = 980
+const LAUNCHER_DEFAULT_HEIGHT = 552
+const LAUNCHER_MIN_WIDTH = 900
+const LAUNCHER_MIN_HEIGHT = 520
+
+function forwardDistributionIndexResult() {
+    if(!pageFinishedLoading || !rendererReady || distributionIndexResult === null || distributionIndexSent || !win || win.isDestroyed()) {
+        return
+    }
+    win.webContents.send('distributionIndexDone', distributionIndexResult)
+    distributionIndexSent = true
+}
 
 // Redirect distribution index event from preloader to renderer.
 // Note: this can arrive before the page's own <script> tags (e.g. settings.js)
@@ -38,9 +52,13 @@ let pageFinishedLoading = false
 // finished loading to avoid referencing not-yet-initialized page variables.
 ipcMain.on('distributionIndexDone', (event, res) => {
     distributionIndexResult = Boolean(res)
-    if(pageFinishedLoading && win && !win.isDestroyed()) {
-        win.webContents.send('distributionIndexDone', distributionIndexResult)
-    }
+    distributionIndexSent = false
+    forwardDistributionIndexResult()
+})
+
+ipcMain.on('rendererReady', () => {
+    rendererReady = true
+    forwardDistributionIndexResult()
 })
 
 // Handle trash item.
@@ -422,20 +440,54 @@ function setupLauncherUpdater() {
 function createWindow() {
 
     pageFinishedLoading = false
+    let launcherWindowShown = false
 
     win = new BrowserWindow({
-        width: 980,
-        height: 552,
+        width: LAUNCHER_DEFAULT_WIDTH,
+        height: LAUNCHER_DEFAULT_HEIGHT,
+        minWidth: LAUNCHER_MIN_WIDTH,
+        minHeight: LAUNCHER_MIN_HEIGHT,
+        show: false,
         icon: getPlatformIcon('nebula-icon'),
         frame: false,
+        transparent: true,
+        hasShadow: true,
         webPreferences: {
             preload: path.join(__dirname, 'app', 'assets', 'js', 'preloader.js'),
             nodeIntegration: true,
             contextIsolation: false
         },
-        backgroundColor: '#171614'
+        backgroundColor: '#00000000'
     })
     remoteMain.enable(win.webContents)
+    win.setMinimumSize(LAUNCHER_MIN_WIDTH, LAUNCHER_MIN_HEIGHT)
+
+    const showLauncherWindow = (source) => {
+        if(launcherWindowShown || !win || win.isDestroyed()) {
+            return
+        }
+
+        const bounds = win.getBounds()
+        if(bounds.width < LAUNCHER_MIN_WIDTH || bounds.height < LAUNCHER_MIN_HEIGHT) {
+            win.setSize(LAUNCHER_DEFAULT_WIDTH, LAUNCHER_DEFAULT_HEIGHT)
+            win.center()
+        }
+        if(win.isMinimized()) {
+            win.restore()
+        }
+        win.show()
+        win.focus()
+        launcherWindowShown = true
+
+        if(devToolsEnabled) {
+            console.log(`[launcher-window] shown via ${source}`, JSON.stringify(win.getBounds()))
+        }
+    }
+
+    win.once('ready-to-show', () => {
+        showLauncherWindow('ready-to-show')
+    })
+
     if(devToolsEnabled) {
         win.webContents.on('console-message', (_event, level, message, line, sourceId) => {
             console.log(`[renderer:${level}] ${sourceId}:${line} ${message}`)
@@ -467,23 +519,25 @@ function createWindow() {
     Object.entries(data).forEach(([key, val]) => ejse.data(key, val))
 
     win.loadURL(pathToFileURL(path.join(__dirname, 'app', 'app.ejs')).toString())
+    win.webContents.on('did-start-loading', () => {
+        pageFinishedLoading = false
+        rendererReady = false
+        distributionIndexSent = false
+    })
     win.webContents.once('did-finish-load', () => {
         if(devToolsEnabled && !win.isDestroyed()) {
             win.webContents.openDevTools({ mode: 'detach' })
         }
         pageFinishedLoading = true
-        if(distributionIndexResult !== null && win && !win.isDestroyed()) {
-            win.webContents.send('distributionIndexDone', distributionIndexResult)
-        }
+        forwardDistributionIndexResult()
+        setTimeout(() => {
+            showLauncherWindow('did-finish-load')
+        }, 500)
     })
-
-    /*win.once('ready-to-show', () => {
-        win.show()
-    })*/
 
     win.removeMenu()
 
-    win.resizable = true
+    win.setResizable(true)
 
     win.on('closed', () => {
         win = null

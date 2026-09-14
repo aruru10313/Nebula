@@ -8,3 +8,9 @@ distribution/distribution.json
 distribution/.distribution-state.json
 distribution/repo
 distribution/servers/
+/news-service/.env
+/news-service/.env.*
+!/news-service/.env.example
+/news-service/node_modules/
+/news-service/admin-dist/
+/news-service/generated/

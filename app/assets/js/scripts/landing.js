@@ -3,20 +3,17 @@
  */
 // Requirements
 const { URL }                 = require('url')
+const https                   = require('https')
 const {
-    MojangRestAPI,
     getServerStatus
 }                             = require('helios-core/mojang')
 const {
     RestResponseStatus,
-    isDisplayableError,
-    validateLocalFile
+    isDisplayableError
 }                             = require('helios-core/common')
 const {
-    FullRepair,
     DistributionIndexProcessor,
-    MojangIndexProcessor,
-    downloadFile
+    MojangIndexProcessor
 }                             = require('helios-core/dl')
 const {
     validateSelectedJvm,
@@ -30,6 +27,7 @@ const {
 // Internal Requirements
 const DiscordWrapper          = require('./assets/js/discordwrapper')
 const ProcessBuilder          = require('./assets/js/processbuilder')
+const ReliableRepair          = require('./assets/js/reliablerepair')
 
 // Launch Elements
 const launch_content          = document.getElementById('launch_content')
@@ -41,6 +39,59 @@ const server_selection_button = document.getElementById('server_selection_button
 const user_text               = document.getElementById('user_text')
 
 const loggerLanding = LoggerUtil.getLogger('Landing')
+
+function loadNewsImageFallback(image, imageUrl){
+    return new Promise((resolve, reject) => {
+        let parsedImageUrl
+        try {
+            parsedImageUrl = new URL(imageUrl)
+        } catch(error) {
+            reject(error)
+            return
+        }
+        if(parsedImageUrl.protocol !== 'https:' || parsedImageUrl.hostname !== 'mc.aruru.kr'){
+            reject(new Error('News image host is not allowed'))
+            return
+        }
+
+        const request = https.get(parsedImageUrl, {
+            headers: {
+                Accept: 'image/*'
+            }
+        }, response => {
+            if(response.statusCode !== 200){
+                response.resume()
+                reject(new Error(`News image request failed with status ${response.statusCode}`))
+                return
+            }
+
+            const contentType = String(response.headers['content-type'] || '').split(';', 1)[0].toLowerCase()
+            if(!/^image\/(?:png|jpe?g|webp|gif)$/.test(contentType)){
+                response.resume()
+                reject(new Error('News image response was not an allowed image type'))
+                return
+            }
+
+            const chunks = []
+            let totalBytes = 0
+            response.on('data', chunk => {
+                totalBytes += chunk.length
+                if(totalBytes > 8 * 1024 * 1024){
+                    response.destroy(new Error('News image exceeds the 8 MB limit'))
+                    return
+                }
+                chunks.push(chunk)
+            })
+            response.on('end', () => {
+                image.src = `data:${contentType};base64,${Buffer.concat(chunks).toString('base64')}`
+                resolve()
+            })
+            response.on('error', reject)
+        })
+        request.setTimeout(5000, () => request.destroy(new Error('News image request timed out')))
+        request.on('error', reject)
+    })
+}
 
 /* Launch Progress Wrapper Functions */
 
@@ -133,6 +184,15 @@ document.getElementById('settingsMediaButton').onclick = async e => {
     switchView(getCurrentView(), VIEWS.settings)
 }
 
+// Bind mods quick-access button (jumps straight to Settings > Mods, avoiding
+// the extra step of opening Settings then hunting for the Mods tab).
+document.getElementById('modsMediaButton').onclick = async e => {
+    await prepareSettings()
+    switchView(getCurrentView(), VIEWS.settings, 500, 500, () => {
+        settingsNavItemListener(document.getElementById('settingsNavMods'), false)
+    })
+}
+
 // Bind avatar overlay button.
 document.getElementById('avatarOverlay').onclick = async e => {
     await prepareSettings()
@@ -176,65 +236,6 @@ server_selection_button.onclick = async e => {
     await toggleServerSelection(true)
 }
 
-// Update Mojang Status Color
-const refreshMojangStatuses = async function(){
-    loggerLanding.info('Refreshing Mojang Statuses..')
-
-    let status = 'grey'
-    let tooltipEssentialHTML = ''
-    let tooltipNonEssentialHTML = ''
-
-    const response = await MojangRestAPI.status()
-    let statuses
-    if(response.responseStatus === RestResponseStatus.SUCCESS) {
-        statuses = response.data
-    } else {
-        loggerLanding.warn('Unable to refresh Mojang service status.')
-        statuses = MojangRestAPI.getDefaultStatuses()
-    }
-    
-    greenCount = 0
-    greyCount = 0
-
-    for(let i=0; i<statuses.length; i++){
-        const service = statuses[i]
-
-        const tooltipHTML = `<div class="mojangStatusContainer">
-            <span class="mojangStatusIcon" style="color: ${MojangRestAPI.statusToHex(service.status)};">&#8226;</span>
-            <span class="mojangStatusName">${service.name}</span>
-        </div>`
-        if(service.essential){
-            tooltipEssentialHTML += tooltipHTML
-        } else {
-            tooltipNonEssentialHTML += tooltipHTML
-        }
-
-        if(service.status === 'yellow' && status !== 'red'){
-            status = 'yellow'
-        } else if(service.status === 'red'){
-            status = 'red'
-        } else {
-            if(service.status === 'grey'){
-                ++greyCount
-            }
-            ++greenCount
-        }
-
-    }
-
-    if(greenCount === statuses.length){
-        if(greyCount === statuses.length){
-            status = 'grey'
-        } else {
-            status = 'green'
-        }
-    }
-    
-    document.getElementById('mojangStatusEssentialContainer').innerHTML = tooltipEssentialHTML
-    document.getElementById('mojangStatusNonEssentialContainer').innerHTML = tooltipNonEssentialHTML
-    document.getElementById('mojang_status_icon').style.color = MojangRestAPI.statusToHex(status)
-}
-
 const refreshServerStatus = async (fade = false) => {
     loggerLanding.info('Refreshing Server Status')
     const serv = (await DistroAPI.getDistribution()).getServerById(ConfigManager.getSelectedServer())
@@ -266,11 +267,7 @@ const refreshServerStatus = async (fade = false) => {
     
 }
 
-refreshMojangStatuses()
 // Server Status is refreshed in uibinder.js on distributionIndexDone.
-
-// Refresh statuses every hour. The status page itself refreshes every day so...
-let mojangStatusListener = setInterval(() => refreshMojangStatuses(true), 60*60*1000)
 // Set refresh rate to once every 5 minutes.
 let serverStatusListener = setInterval(() => refreshServerStatus(true), 300000)
 
@@ -350,21 +347,10 @@ async function downloadJava(effectiveJavaOptions, launchAfter = true) {
         throw new Error(Lang.queryJS('landing.downloadJava.findJdkFailure'))
     }
 
-    let received = 0
-    await downloadFile(asset.url, asset.path, ({ transferred }) => {
-        received = transferred
+    await ReliableRepair.downloadAsset(asset, ({ transferred }) => {
         setDownloadPercentage(Math.trunc((transferred/asset.size)*100))
     })
     setDownloadPercentage(100)
-
-    if(received != asset.size) {
-        loggerLanding.warn(`Java Download: Expected ${asset.size} bytes but received ${received}`)
-        if(!await validateLocalFile(asset.path, asset.algo, asset.hash)) {
-            log.error(`Hashes do not match, ${asset.id} may be corrupted.`)
-            // Don't know how this could happen, but report it.
-            throw new Error(Lang.queryJS('landing.downloadJava.javaDownloadCorruptedError'))
-        }
-    }
 
     // Extract
     // Show installing progress bar.
@@ -397,7 +383,7 @@ async function downloadJava(effectiveJavaOptions, launchAfter = true) {
 
     // TODO Callback hell
     // Refactor the launch functions
-    asyncSystemScan(effectiveJavaOptions, launchAfter)
+    await asyncSystemScan(effectiveJavaOptions, launchAfter)
 
 }
 
@@ -434,12 +420,13 @@ async function dlAsync(login = true) {
     window.nebulaDownloadUpdates = async function() {
         const distro = await DistroAPI.refreshDistributionOrFallback()
         const serverId = ConfigManager.getSelectedServer()
-        const repair = new FullRepair(
+        const repair = new ReliableRepair(
             ConfigManager.getCommonDirectory(),
             ConfigManager.getInstanceDirectory(),
             ConfigManager.getLauncherDirectory(),
             serverId,
-            DistroAPI.isDevMode()
+            DistroAPI.isDevMode(),
+            distro
         )
 
         repair.spawnReceiver()
@@ -471,12 +458,13 @@ async function dlAsync(login = true) {
     toggleLaunchArea(true)
     setLaunchPercentage(0, 100)
 
-    const fullRepairModule = new FullRepair(
+    const fullRepairModule = new ReliableRepair(
         ConfigManager.getCommonDirectory(),
         ConfigManager.getInstanceDirectory(),
         ConfigManager.getLauncherDirectory(),
         ConfigManager.getSelectedServer(),
-        DistroAPI.isDevMode()
+        DistroAPI.isDevMode(),
+        distro
     )
 
     fullRepairModule.spawnReceiver()
@@ -600,6 +588,14 @@ async function dlAsync(login = true) {
         try {
             // Build Minecraft process.
             proc = pb.build()
+
+            proc.on('error', (err) => {
+                loggerLaunchSuite.error('Unable to start Minecraft process.', err)
+                showLaunchFailure(
+                    Lang.queryJS('landing.dlAsync.errorDuringLaunchTitle'),
+                    err.message || Lang.queryJS('landing.dlAsync.checkConsoleForDetails')
+                )
+            })
 
             // Bind listeners to stdout.
             proc.stdout.on('data', tempListener)
@@ -928,13 +924,42 @@ document.addEventListener('keydown', (e) => {
  * @param {number} index The article index.
  */
 function displayArticle(articleObject, index){
-    newsArticleTitle.innerHTML = articleObject.title
+    newsArticleTitle.textContent = articleObject.title
     newsArticleTitle.href = articleObject.link
-    newsArticleAuthor.innerHTML = 'by ' + articleObject.author
-    newsArticleDate.innerHTML = articleObject.date
-    newsArticleComments.innerHTML = articleObject.comments
+    newsArticleAuthor.textContent = 'by ' + articleObject.author
+    newsArticleDate.textContent = articleObject.date
+    newsArticleComments.textContent = articleObject.comments
     newsArticleComments.href = articleObject.commentsLink
-    newsArticleContentScrollable.innerHTML = '<div id="newsArticleContentWrapper"><div class="newsArticleSpacerTop"></div>' + articleObject.content + '<div class="newsArticleSpacerBot"></div></div>'
+    newsArticleContentScrollable.replaceChildren()
+    const articleWrapper = document.createElement('div')
+    articleWrapper.id = 'newsArticleContentWrapper'
+    const topSpacer = document.createElement('div')
+    topSpacer.className = 'newsArticleSpacerTop'
+    articleWrapper.append(topSpacer)
+    if(articleObject.imageUrl){
+        const image = document.createElement('img')
+        image.className = 'newsArticleImage'
+        image.src = articleObject.imageUrl
+        image.alt = articleObject.title || 'Nebula announcement'
+        image.loading = 'lazy'
+        image.referrerPolicy = 'no-referrer'
+        image.addEventListener('error', () => {
+            loadNewsImageFallback(image, articleObject.imageUrl).catch(error => {
+                loggerLanding.warn(`Unable to load news image: ${error.message}`)
+                image.remove()
+            })
+        }, { once: true })
+        articleWrapper.append(image)
+    }
+    const articleBody = document.createElement('div')
+    articleBody.className = 'newsArticleBody'
+    articleBody.style.fontSize = `${articleObject.fontSize || 16}px`
+    articleBody.innerHTML = articleObject.content
+    articleWrapper.append(articleBody)
+    const bottomSpacer = document.createElement('div')
+    bottomSpacer.className = 'newsArticleSpacerBot'
+    articleWrapper.append(bottomSpacer)
+    newsArticleContentScrollable.append(articleWrapper)
     Array.from(newsArticleContentScrollable.getElementsByClassName('bbCodeSpoilerButton')).forEach(v => {
         v.onclick = () => {
             const text = v.parentElement.getElementsByClassName('bbCodeSpoilerText')[0]
@@ -950,6 +975,66 @@ function displayArticle(articleObject, index){
  * distribution index.
  */
 async function loadNews(){
+    const apiNews = await new Promise((resolve) => {
+        $.ajax({
+            url: 'https://mc.aruru.kr/api/v1/news?limit=20',
+            dataType: 'json',
+            timeout: 3000,
+            success: (data) => resolve(data),
+            error: () => resolve(null)
+        })
+    })
+
+    if(apiNews && Array.isArray(apiNews.announcements)){
+        const escapeHtml = (value) => String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;')
+
+        return {
+            articles: apiNews.announcements.map((announcement) => {
+                const title = escapeHtml(announcement.title)
+                const body = escapeHtml(announcement.body).replace(/\r?\n/g, '<br>')
+                let imageUrl = null
+                if(typeof announcement.imageUrl === 'string' && announcement.imageUrl.length > 0){
+                    try {
+                        const parsedImageUrl = new URL(announcement.imageUrl, 'https://mc.aruru.kr')
+                        if(parsedImageUrl.protocol === 'https:' && parsedImageUrl.hostname === 'mc.aruru.kr'){
+                            imageUrl = parsedImageUrl.href
+                        }
+                    } catch(_err) {
+                        imageUrl = null
+                    }
+                }
+                const date = new Date(announcement.publishedAt)
+                const formattedDate = Number.isNaN(date.valueOf())
+                    ? ''
+                    : date.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric'
+                    })
+
+                return {
+                    link: 'https://mc.aruru.kr/#announcements',
+                    title,
+                    date: formattedDate,
+                    author: 'Nebula',
+                    content: body,
+                    imageUrl,
+                    fontSize: Number.isInteger(announcement.fontSize)
+                        ? Math.min(Math.max(announcement.fontSize, 12), 32)
+                        : 16,
+                    comments: '0 Comments',
+                    commentsLink: 'https://mc.aruru.kr/#announcements'
+                }
+            })
+        }
+    }
 
     const distroData = await DistroAPI.getDistribution()
     if(!distroData.rawDistribution.rss) {
@@ -1017,3 +1102,5 @@ async function loadNews(){
 
     return await promise
 }
+
+window.nebulaLandingReady = true

@@ -82,25 +82,7 @@ function changeAllowPrerelease(val){
 
 function showUpdateUI(info){
     //TODO Make this message a bit more informative `${info.version}`
-    document.getElementById('image_seal_container').setAttribute('update', true)
-    document.getElementById('image_seal_container').onclick = () => {
-        /*setOverlayContent('Update Available', 'A new update for the launcher is available. Would you like to install now?', 'Install', 'Later')
-        setOverlayHandler(() => {
-            if(!isDev){
-                window.nebulaDownloadUpdates?.()
-            } else {
-                console.error('Cannot install updates in development environment.')
-                toggleOverlay(false)
-            }
-        })
-        setDismissHandler(() => {
-            toggleOverlay(false)
-        })
-        toggleOverlay(true, true)*/
-        switchView(getCurrentView(), VIEWS.settings, 500, 500, () => {
-            settingsNavItemListener(document.getElementById('settingsNavUpdate'), false)
-        })
-    }
+    loggerUICore.info(`Launcher update available: ${info?.version ?? 'unknown'}`)
 }
 
 /* jQuery Example
@@ -111,6 +93,17 @@ $(function(){
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
         loggerUICore.info('UICore Initializing..')
+
+        // Remove the rounded clip while a frameless window is maximized.
+        const currentWindow = remote.getCurrentWindow()
+        const syncWindowShape = () => {
+            const maximized = currentWindow.isMaximized()
+            document.body.classList.toggle('window-maximized', maximized)
+            document.documentElement.classList.toggle('window-maximized', maximized)
+        }
+        currentWindow.on('maximize', syncWindowShape)
+        currentWindow.on('unmaximize', syncWindowShape)
+        syncWindowShape()
 
         // Bind close button.
         Array.from(document.getElementsByClassName('fCb')).map((val) => {
@@ -129,6 +122,7 @@ document.addEventListener('readystatechange', function () {
                 } else {
                     window.maximize()
                 }
+                setTimeout(syncWindowShape, 0)
                 document.activeElement.blur()
             })
         })

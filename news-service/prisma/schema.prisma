@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id                 String         @id @default(cuid())
+  loginId            String         @unique @map("googleEmail")
+  passwordHash       String?
+  totpSecretEncrypted String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  sessions           Session[]
+  announcements     Announcement[]
+}
+
+model Session {
+  id           String    @id @default(cuid())
+  tokenHash    String    @unique
+  csrfToken    String
+  stage        String    @default("2fa")
+  expiresAt    DateTime
+  createdAt    DateTime  @default(now())
+  adminUserId  String
+  adminUser    AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  body        String
+  imageUrl    String?
+  fontSize    Int      @default(16)
+  publishedAt DateTime
+  authorId    String
+  author      AdminUser @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([publishedAt])
+}

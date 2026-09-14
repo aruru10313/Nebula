@@ -1,0 +1,13 @@
+mc.aruru.kr {
+    encode gzip
+
+    @news_app path /api/* /auth/* /aruru/admin*
+    handle @news_app {
+        reverse_proxy app:3001
+    }
+
+    handle {
+        root * /srv/site
+        file_server
+    }
+}

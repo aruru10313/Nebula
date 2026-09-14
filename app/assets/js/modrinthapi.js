@@ -3,6 +3,7 @@ const got = require('got')
 const path = require('path')
 
 const UserOptionMods = require('./useroptionmods')
+const ReliableRepair = require('./reliablerepair')
 
 const API_URL = 'https://api.modrinth.com/v2'
 const CACHE_TTL = 5 * 60 * 1000
@@ -137,15 +138,25 @@ async function install(launcherDirectory, { projectId, versionId } = {}) {
     const oldMod = manifest.mods.find(mod => mod.projectId === projectId)
     const modsDirectory = UserOptionMods.getModsDirectory(launcherDirectory)
     const targetPath = path.join(modsDirectory, fileName)
-    const partialPath = `${targetPath}.download`
 
     await fs.ensureDir(modsDirectory)
-    const downloaded = await got(file.url, {
-        responseType: 'buffer',
-        timeout: { request: 60000 }
-    })
-    await fs.writeFile(partialPath, downloaded.body)
-    await fs.move(partialPath, targetPath, { overwrite: true })
+    const checksum = file.hashes?.sha512
+        ? { algo: 'sha512', hash: file.hashes.sha512 }
+        : file.hashes?.sha1
+            ? { algo: 'sha1', hash: file.hashes.sha1 }
+            : null
+    if (checksum == null || !Number.isInteger(file.size) || file.size < 1) {
+        throw new Error('Modrinth returned an incomplete file checksum or size.')
+    }
+    await ReliableRepair.downloadAsset({
+        id: `Modrinth mod ${projectId} ${version.version_number}`,
+        url: file.url,
+        path: targetPath,
+        size: file.size,
+        hash: checksum.hash,
+        algo: checksum.algo
+    }, () => {})
+
     if(oldMod != null && oldMod.fileName !== fileName) {
         await fs.remove(path.join(modsDirectory, oldMod.fileName))
     }

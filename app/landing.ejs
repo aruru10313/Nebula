@@ -1,12 +1,20 @@
 <div id="landingContainer" style="display: none;">
     <div id="upper">
-        <div id="left">
-            <div id="image_seal_container">
-                <img id="image_seal" src="assets/images/nebula-logo.svg"/>
-                <div id="updateAvailableTooltip"><%- lang('landing.updateAvailableTooltip') %></div>
-            </div>
-        </div>
         <div id="content">
+            <section id="landingHero">
+                <div id="landingMeta">
+                    <span class="landingMetaChip">MC 1.20.1</span>
+                    <span class="landingMetaChip">FORGE 47.4.23</span>
+                    <span class="landingMetaChip">REAL ECONOMY</span>
+                    <div id="server_status_wrapper" class="landingMetaChip landingServerChip">
+                        <span class="bot_label" id="landingPlayerLabel"><%- lang('landing.serverStatus') %></span>
+                        <span id="player_count"><%- lang('landing.serverStatusPlaceholder') %></span>
+                    </div>
+                </div>
+                <h1 id="landingTitle">Nebula Survival</h1>
+                <p id="landingSubtitle">별빛 아래에서 시작되는 현실경제 서버</p>
+                <p id="landingDescription">Forge 1.20.1 기반의 Nebula 세계에서 새로운 생존을 시작하세요.</p>
+            </section>
         </div>
         <div id="right">
             <div id="rightContainer">
@@ -18,6 +26,19 @@
                 </div>
                 <div id="mediaContent">
                     <div id="internalMedia">
+                        <div class="mediaContainer" id="homeMediaContainer" aria-label="Home">
+                            <svg id="homeSVG" class="mediaSVG" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M3 10.8 12 3l9 7.8v9.7a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20.5v-9.7Zm2 .9v7.6h4.3v-5.1h5.4v5.1H19v-7.6l-7-6.1-7 6.1Z"/>
+                            </svg>
+                        </div>
+                        <div class="mediaContainer" id="modsMediaContainer">
+                            <button class="mediaButton" id="modsMediaButton">
+                                <svg id="modsSVG" class="mediaSVG" viewBox="0 0 24 24">
+                                    <path d="M12 2 3 6.5v11L12 22l9-4.5v-11L12 2zm0 2.24 6.11 3.06L12 10.36 5.89 7.3 12 4.24zM5 8.87l6 3v7.06l-6-3V8.87zm8 10.06v-7.06l6-3v7.06l-6 3z"/>
+                                </svg>
+                                <div id="modsTooltip">Mods</div>
+                            </button>
+                        </div>
                         <div class="mediaContainer" id="settingsMediaContainer">
                             <button class="mediaButton" id="settingsMediaButton">
                                 <svg id="settingsSVG" class="mediaSVG" viewBox="0 0 141.36 137.43">
@@ -31,15 +52,13 @@
                     <div id="externalMedia">
                         <div class="mediaContainer">
                             <a href="<%- lang('landing.mediaYouTubeURL') %>" class="mediaURL" id="youtubeURL">
-                                <svg id="youtubeSVG" class="mediaSVG" viewBox="35.34 34.3575 70.68 68.71500">
-                                    <g>
-                                        <path d="M84.8,69.52,65.88,79.76V59.27Zm23.65.59c0-5.14-.79-17.63-3.94-20.57S99,45.86,73.37,45.86s-28,.73-31.14,3.68S38.29,65,38.29,70.11s.79,17.63,3.94,20.57,5.52,3.68,31.14,3.68,28-.74,31.14-3.68,3.94-15.42,3.94-20.57"/>
-                                    </g>
+                                <svg id="youtubeSVG" class="mediaSVG" viewBox="35.34 34.3575 70.68 68.71500" aria-label="YouTube">
+                                    <path d="M84.8 69.52 65.88 79.76V59.27Zm23.65.59c0-5.14-.79-17.63-3.94-20.57S99 45.86 73.37 45.86s-28 .73-31.14 3.68S38.29 65 38.29 70.11s.79 17.63 3.94 20.57 5.52 3.68 31.14 3.68 28-.74 31.14-3.68 3.94-15.42 3.94-20.57"/>
                                 </svg>
                             </a>
                         </div>
                         <div class="mediaContainer">
-                            <a href="<%- lang('landing.mediaChzzkURL') %>" class="mediaURL" id="chzzkURL">
+                            <a href="<%- lang('landing.mediaChzzkURL') %>" class="mediaURL" id="chzzkURL" aria-label="Chzzk">
                                 <span id="chzzkLabel">치</span>
                             </a>
                         </div>
@@ -61,29 +80,6 @@
         <div id="left">
             <div class="bot_wrapper">
                 <div id="content">
-                    <div id="server_status_wrapper">
-                        <span class="bot_label" id="landingPlayerLabel"><%- lang('landing.serverStatus') %></span>
-                        <span id="player_count"><%- lang('landing.serverStatusPlaceholder') %></span>
-                    </div>
-                    <div class="bot_divider"></div>
-                    <div id="mojangStatusWrapper">
-                        <span class="bot_label"><%- lang('landing.mojangStatus') %></span>
-                        <span id="mojang_status_icon">&#8226;</span>
-                        <div id="mojangStatusTooltip">
-                            <div id="mojangStatusTooltipTitle"><%- lang('landing.mojangStatusTooltipTitle') %></div>
-                            <div id="mojangStatusEssentialContainer">
-                                <!-- Essential Mojang services are populated here. -->
-                            </div>
-                            <div id="mojangStatusNEContainer">
-                                <div class="mojangStatusNEBar"></div>
-                                <div id="mojangStatusNETitle"><%- lang('landing.mojangStatusNETitle') %></div>
-                                <div class="mojangStatusNEBar"></div>
-                            </div>
-                            <div id="mojangStatusNonEssentialContainer">
-                                <!-- Non Essential Mojang services are populated here. -->
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

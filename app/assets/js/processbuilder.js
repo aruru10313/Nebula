@@ -9,6 +9,7 @@ const os                    = require('os')
 const path                  = require('path')
 
 const ConfigManager            = require('./configmanager')
+const ServerList                = require('./serverlist')
 const UserOptionMods           = require('./useroptionmods')
 
 const logger = LoggerUtil.getLogger('ProcessBuilder')
@@ -47,6 +48,18 @@ class ProcessBuilder {
      */
     build(){
         fs.ensureDirSync(this.gameDir)
+        try {
+            const registration = ServerList.ensureNebulaServer(this.gameDir)
+            if(registration.added){
+                logger.info(`Added ${ServerList.SERVER_ADDRESS} to the Minecraft server list.`)
+            } else if(registration.alreadyPresent){
+                logger.info(`${ServerList.SERVER_ADDRESS} is already in the Minecraft server list.`)
+            } else if(registration.skipped){
+                logger.info('Minecraft server list registration was already completed for this instance.')
+            }
+        } catch(err) {
+            logger.warn('Unable to register Nebula server in servers.dat.', err)
+        }
         const tempNativePath = path.join(os.tmpdir(), ConfigManager.getTempNativeFolder(), crypto.pseudoRandomBytes(16).toString('hex'))
         process.throwDeprecation = true
         this.setupLiteLoader()
@@ -752,11 +765,7 @@ class ProcessBuilder {
 
                         // Extract the file.
                         if(!shouldExclude){
-                            fs.writeFile(path.join(tempNativePath, fileName), zipEntries[i].getData(), (err) => {
-                                if(err){
-                                    logger.error('Error while extracting native library:', err)
-                                }
-                            })
+                            fs.outputFileSync(path.join(tempNativePath, fileName), zipEntries[i].getData())
                         }
 
                     }
@@ -803,11 +812,7 @@ class ProcessBuilder {
 
                         // Extract the file.
                         if(!shouldExclude){
-                            fs.writeFile(path.join(tempNativePath, extractName), zipEntries[i].getData(), (err) => {
-                                if(err){
-                                    logger.error('Error while extracting native library:', err)
-                                }
-                            })
+                            fs.outputFileSync(path.join(tempNativePath, extractName), zipEntries[i].getData())
                         }
 
                     }

@@ -8,7 +8,7 @@
                 <div id="settingsNavItemsContent">
                     <button class="settingsNavItem" rSc="settingsTabAccount" id="settingsNavAccount" selected><%- lang('settings.navAccount') %></button>
                     <button class="settingsNavItem" rSc="settingsTabMinecraft"><%- lang('settings.navMinecraft') %></button>
-                    <button class="settingsNavItem" rSc="settingsTabMods"><%- lang('settings.navMods') %></button>
+                    <button class="settingsNavItem" rSc="settingsTabMods" id="settingsNavMods"><%- lang('settings.navMods') %></button>
                     <button class="settingsNavItem" rSc="settingsTabJava"><%- lang('settings.navJava') %></button>
                     <button class="settingsNavItem" rSc="settingsTabLauncher"><%- lang('settings.navLauncher') %></button>
                     <button class="settingsNavItem" rSc="settingsTabStorage">Storage</button>
@@ -290,21 +290,6 @@
                 <span class="settingsTabHeaderText"><%- lang('settings.launcherTabHeaderText') %></span>
                 <span class="settingsTabHeaderDesc"><%- lang('settings.launcherTabHeaderDesc') %></span>
             </div>
-            <div id="settingsTabStorage" class="settingsTab" style="display: none;">
-                <div class="settingsTabHeader">
-                    <span class="settingsTabHeaderText">Storage</span>
-                    <span class="settingsTabHeaderDesc">Review unused launcher files without touching required server mods or personal option mods.</span>
-                </div>
-                <div class="settingsStoragePanel">
-                    <div id="settingsStorageSummary">Scan the distribution data directory to find unused files.</div>
-                    <div id="settingsStorageError" role="alert"></div>
-                    <div class="settingsStorageActions">
-                        <button id="settingsStorageScan" type="button">Scan storage</button>
-                        <button id="settingsStorageDelete" type="button" disabled>Delete selected files</button>
-                    </div>
-                    <div id="settingsStorageCandidates"></div>
-                </div>
-            </div>
             <div class="settingsFieldContainer">
                 <div class="settingsFieldLeft">
                     <span class="settingsFieldTitle"><%- lang('settings.allowPrereleaseTitle') %></span>
@@ -335,6 +320,21 @@
                     </div>
                 </div>
                 <div class="settingsFileSelDesc"><%- lang('settings.gameDirectoryDesc') %></div>
+            </div>
+        </div>
+        <div id="settingsTabStorage" class="settingsTab" style="display: none;">
+            <div class="settingsTabHeader">
+                <span class="settingsTabHeaderText">Storage</span>
+                <span class="settingsTabHeaderDesc">Review unused launcher files without touching required server mods or personal option mods.</span>
+            </div>
+            <div class="settingsStoragePanel">
+                <div id="settingsStorageSummary">Scan the distribution data directory to find unused files.</div>
+                <div id="settingsStorageError" role="alert"></div>
+                <div class="settingsStorageActions">
+                    <button id="settingsStorageScan" type="button">Scan storage</button>
+                    <button id="settingsStorageDelete" type="button" disabled>Delete selected files</button>
+                </div>
+                <div id="settingsStorageCandidates"></div>
             </div>
         </div>
         <div id="settingsTabAbout" class="settingsTab" style="display: none;">
