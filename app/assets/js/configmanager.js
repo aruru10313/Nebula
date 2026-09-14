@@ -9,7 +9,21 @@ const sysRoot = process.env.APPDATA || (process.platform == 'darwin' ? process.e
 
 const dataPath = path.join(sysRoot, '.helioslauncher')
 
-const launcherDir = require('@electron/remote').app.getPath('userData')
+function resolveLauncherDirectory() {
+    if(process.type === 'browser') {
+        return require('electron').app.getPath('userData')
+    }
+
+    const configRoot = process.platform === 'darwin'
+        ? path.join(process.env.HOME, 'Library', 'Application Support')
+        : process.platform === 'win32'
+            ? process.env.APPDATA
+            : (process.env.XDG_CONFIG_HOME || path.join(process.env.HOME, '.config'))
+
+    return path.join(configRoot, 'Nebula Launcher')
+}
+
+const launcherDir = resolveLauncherDirectory()
 
 /**
  * Retrieve the absolute path of the launcher directory.
