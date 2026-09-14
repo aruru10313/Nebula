@@ -21,6 +21,7 @@ const {
     DISTRIBUTION_CLEANUP_OPCODE
 } = require('./app/assets/js/ipcconstants')
 const LangLoader                        = require('./app/assets/js/langloader')
+const devToolsEnabled                   = process.env.NEBULA_DEVTOOLS === '1'
 const ModrinthAPI                       = require('./app/assets/js/modrinthapi')
 const DistributionCleanup               = require('./app/assets/js/distributioncleanup')
 
@@ -429,6 +430,9 @@ function createWindow() {
     })
     remoteMain.enable(win.webContents)
     win.webContents.on('before-input-event', (event, input) => {
+        if(devToolsEnabled) {
+            return
+        }
         const key = input.key.toLowerCase()
         if((input.control && input.shift && key === 'i') || key === 'f12') {
             event.preventDefault()
@@ -443,6 +447,9 @@ function createWindow() {
 
     win.loadURL(pathToFileURL(path.join(__dirname, 'app', 'app.ejs')).toString())
     win.webContents.once('did-finish-load', () => {
+        if(devToolsEnabled && !win.isDestroyed()) {
+            win.webContents.openDevTools({ mode: 'detach' })
+        }
         if(distributionIndexResult !== null && win && !win.isDestroyed()) {
             win.webContents.send('distributionIndexDone', distributionIndexResult)
         }
