@@ -1,8 +1,8 @@
 # Nebula downloads site
 
-This is a static download page for the Oracle-hosted website. Upload the contents of
-this directory to the web root (for example `/var/www/nebula`) and configure Nginx
-to serve `index.html`.
+This is a static download and legal-information site for the Oracle-hosted website.
+Upload the contents of this directory to the web root (for example `/var/www/nebula`)
+and configure Nginx to serve `index.html`.
 
 The download links point to the latest GitHub Release assets:
 
