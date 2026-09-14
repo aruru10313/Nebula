@@ -8,6 +8,51 @@ document.querySelectorAll('[data-platform]').forEach(card => {
     }
 })
 
+const releaseRepository = 'https://api.github.com/repos/aruru10313/Nebula/releases/latest'
+const releasePage = 'https://github.com/aruru10313/Nebula/releases/latest'
+const releaseVersion = document.querySelector('#release-version')
+const releaseAssetPatterns = {
+    windows: /^Nebula-setup-[^/]+\.exe$/,
+    macos: /^Nebula-Launcher-setup-[^/]+-x64\.dmg$/,
+    linux: /^Nebula-setup-[^/]+\.AppImage$/
+}
+
+function useReleaseFallback() {
+    document.querySelectorAll('[data-release-asset]').forEach(link => {
+        link.href = releasePage
+    })
+    if (releaseVersion) {
+        releaseVersion.textContent = 'GitHub Releases'
+    }
+}
+
+fetch(releaseRepository, {
+    headers: { accept: 'application/vnd.github+json' }
+})
+    .then(response => {
+        if (!response.ok) throw new Error('release request failed')
+        return response.json()
+    })
+    .then(release => {
+        const assets = Array.isArray(release.assets) ? release.assets : []
+        const version = String(release.tag_name || '').replace(/^v/, '')
+        if (!version) throw new Error('release version missing')
+
+        Object.entries(releaseAssetPatterns).forEach(([platformName, pattern]) => {
+            const asset = assets.find(candidate => pattern.test(candidate.name))
+            const link = document.querySelector(`[data-release-asset="${platformName}"]`)
+            if (asset && link) {
+                link.href = asset.browser_download_url
+            }
+        })
+        if (releaseVersion) {
+            releaseVersion.textContent = version
+        }
+    })
+    .catch(() => {
+        useReleaseFallback()
+    })
+
 const announcementList = document.querySelector('#announcement-list')
 if (announcementList) {
     fetch('/api/v1/news?limit=5', { headers: { accept: 'application/json' } })
