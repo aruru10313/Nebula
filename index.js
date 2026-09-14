@@ -27,9 +27,14 @@ const DistributionCleanup               = require('./app/assets/js/distributionc
 // Setup Lang
 LangLoader.setupLanguage()
 
+let distributionIndexResult = null
+
 // Redirect distribution index event from preloader to renderer.
 ipcMain.on('distributionIndexDone', (event, res) => {
-    event.sender.send('distributionIndexDone', res)
+    distributionIndexResult = Boolean(res)
+    if(win && !win.isDestroyed()) {
+        win.webContents.send('distributionIndexDone', distributionIndexResult)
+    }
 })
 
 // Handle trash item.
@@ -437,6 +442,11 @@ function createWindow() {
     Object.entries(data).forEach(([key, val]) => ejse.data(key, val))
 
     win.loadURL(pathToFileURL(path.join(__dirname, 'app', 'app.ejs')).toString())
+    win.webContents.once('did-finish-load', () => {
+        if(distributionIndexResult !== null && win && !win.isDestroyed()) {
+            win.webContents.send('distributionIndexDone', distributionIndexResult)
+        }
+    })
 
     /*win.once('ready-to-show', () => {
         win.show()
