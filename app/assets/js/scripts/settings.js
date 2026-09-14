@@ -675,6 +675,15 @@ document.getElementById('settingsGameHeight').addEventListener('keydown', (e) =>
 
 const settingsModsContainer = document.getElementById('settingsModsContainer')
 
+function escapeHtml(value){
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+}
+
 /**
  * Resolve and update the mods on the UI.
  */
@@ -705,16 +714,19 @@ function parseModulesForUI(mdls, submodules, servConf){
     for(const mdl of mdls){
 
         if(mdl.rawModule.type === Type.ForgeMod || mdl.rawModule.type === Type.LiteMod || mdl.rawModule.type === Type.LiteLoader || mdl.rawModule.type === Type.FabricMod){
+            const moduleId = escapeHtml(mdl.getVersionlessMavenIdentifier())
+            const moduleName = escapeHtml(mdl.rawModule.name)
+            const moduleVersion = escapeHtml(mdl.mavenComponents.version)
 
             if(mdl.getRequired().value){
 
-                reqMods += `<div id="${mdl.getVersionlessMavenIdentifier()}" class="settingsBaseMod settings${submodules ? 'Sub' : ''}Mod" enabled>
+                reqMods += `<div id="${moduleId}" class="settingsBaseMod settings${submodules ? 'Sub' : ''}Mod" enabled>
                     <div class="settingsModContent">
                         <div class="settingsModMainWrapper">
                             <div class="settingsModStatus"></div>
                             <div class="settingsModDetails">
-                                <span class="settingsModName">${mdl.rawModule.name}</span>
-                                <span class="settingsModVersion">v${mdl.mavenComponents.version}</span>
+                                <span class="settingsModName">${moduleName}</span>
+                                <span class="settingsModVersion">v${moduleVersion}</span>
                             </div>
                         </div>
                         <label class="toggleSwitch" reqmod>
@@ -732,17 +744,17 @@ function parseModulesForUI(mdls, submodules, servConf){
                 const conf = servConf[mdl.getVersionlessMavenIdentifier()]
                 const val = typeof conf === 'object' ? conf.value : conf
 
-                optMods += `<div id="${mdl.getVersionlessMavenIdentifier()}" class="settingsBaseMod settings${submodules ? 'Sub' : ''}Mod" ${val ? 'enabled' : ''}>
+                optMods += `<div id="${moduleId}" class="settingsBaseMod settings${submodules ? 'Sub' : ''}Mod" ${val ? 'enabled' : ''}>
                     <div class="settingsModContent">
                         <div class="settingsModMainWrapper">
                             <div class="settingsModStatus"></div>
                             <div class="settingsModDetails">
-                                <span class="settingsModName">${mdl.rawModule.name}</span>
-                                <span class="settingsModVersion">v${mdl.mavenComponents.version}</span>
+                                <span class="settingsModName">${moduleName}</span>
+                                <span class="settingsModVersion">v${moduleVersion}</span>
                             </div>
                         </div>
                         <label class="toggleSwitch">
-                            <input type="checkbox" formod="${mdl.getVersionlessMavenIdentifier()}" ${val ? 'checked' : ''}>
+                            <input type="checkbox" formod="${moduleId}" ${val ? 'checked' : ''}>
                             <span class="toggleSwitchSlider"></span>
                         </label>
                     </div>

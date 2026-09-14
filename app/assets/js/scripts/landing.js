@@ -923,13 +923,62 @@ document.addEventListener('keydown', (e) => {
  * @param {Object} articleObject The article meta object.
  * @param {number} index The article index.
  */
+function safeNewsUrl(value){
+    try {
+        const parsed = new URL(value)
+        return parsed.protocol === 'https:' || parsed.protocol === 'http:' ? parsed.href : '#'
+    } catch(_err) {
+        return '#'
+    }
+}
+
+function sanitizeNewsHtml(value){
+    const template = document.createElement('template')
+    template.innerHTML = String(value || '')
+    const allowedTags = new Set(['A', 'B', 'BLOCKQUOTE', 'BR', 'CODE', 'EM', 'I', 'LI', 'OL', 'P', 'PRE', 'STRONG', 'U', 'UL'])
+    const allowedAttributes = new Set(['href', 'title'])
+
+    const walk = (parent) => {
+        Array.from(parent.childNodes).forEach((node) => {
+            if(node.nodeType === Node.COMMENT_NODE){
+                node.remove()
+                return
+            }
+            if(node.nodeType !== Node.ELEMENT_NODE){
+                return
+            }
+            if(!allowedTags.has(node.tagName)){
+                node.replaceWith(document.createTextNode(node.textContent || ''))
+                return
+            }
+            Array.from(node.attributes).forEach((attribute) => {
+                if(!allowedAttributes.has(attribute.name.toLowerCase())){
+                    node.removeAttribute(attribute.name)
+                }
+            })
+            if(node.tagName === 'A'){
+                const href = safeNewsUrl(node.getAttribute('href'))
+                if(href === '#'){
+                    node.removeAttribute('href')
+                } else {
+                    node.setAttribute('href', href)
+                }
+            }
+            walk(node)
+        })
+    }
+
+    walk(template.content)
+    return template.content
+}
+
 function displayArticle(articleObject, index){
     newsArticleTitle.textContent = articleObject.title
-    newsArticleTitle.href = articleObject.link
+    newsArticleTitle.href = safeNewsUrl(articleObject.link)
     newsArticleAuthor.textContent = 'by ' + articleObject.author
     newsArticleDate.textContent = articleObject.date
     newsArticleComments.textContent = articleObject.comments
-    newsArticleComments.href = articleObject.commentsLink
+    newsArticleComments.href = safeNewsUrl(articleObject.commentsLink)
     newsArticleContentScrollable.replaceChildren()
     const articleWrapper = document.createElement('div')
     articleWrapper.id = 'newsArticleContentWrapper'
@@ -954,7 +1003,7 @@ function displayArticle(articleObject, index){
     const articleBody = document.createElement('div')
     articleBody.className = 'newsArticleBody'
     articleBody.style.fontSize = `${articleObject.fontSize || 16}px`
-    articleBody.innerHTML = articleObject.content
+    articleBody.append(sanitizeNewsHtml(articleObject.content))
     articleWrapper.append(articleBody)
     const bottomSpacer = document.createElement('div')
     bottomSpacer.className = 'newsArticleSpacerBot'

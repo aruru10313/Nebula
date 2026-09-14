@@ -105,6 +105,15 @@ function validImageUrl(value) {
     }
 }
 
+function validImageBuffer(buffer, mimeType) {
+    if (!Buffer.isBuffer(buffer)) return false
+    if (mimeType === 'image/png') return buffer.subarray(0, 8).equals(Buffer.from('89504e470d0a1a0a', 'hex'))
+    if (mimeType === 'image/jpeg') return buffer.subarray(0, 3).equals(Buffer.from('ffd8ff', 'hex'))
+    if (mimeType === 'image/gif') return buffer.subarray(0, 6).toString('ascii') === 'GIF87a' || buffer.subarray(0, 6).toString('ascii') === 'GIF89a'
+    if (mimeType === 'image/webp') return buffer.subarray(0, 4).toString('ascii') === 'RIFF' && buffer.subarray(8, 12).toString('ascii') === 'WEBP'
+    return false
+}
+
 function validFontSize(value) {
     return Number.isInteger(value) && value >= 12 && value <= 32 ? value : null
 }
@@ -350,6 +359,10 @@ async function start() {
             if (file.file.truncated) {
                 await fs.rm(destination, { force: true })
                 return reply.code(413).send({ error: '이미지는 5MB 이하만 업로드할 수 있습니다.' })
+            }
+            if (!validImageBuffer(await fs.readFile(destination), file.mimetype)) {
+                await fs.rm(destination, { force: true })
+                return reply.code(400).send({ error: '이미지 파일 형식이 올바르지 않습니다.' })
             }
         } catch (error) {
             await fs.rm(destination, { force: true }).catch(() => {})
