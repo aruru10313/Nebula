@@ -29,11 +29,16 @@ const DistributionCleanup               = require('./app/assets/js/distributionc
 LangLoader.setupLanguage()
 
 let distributionIndexResult = null
+let pageFinishedLoading = false
 
 // Redirect distribution index event from preloader to renderer.
+// Note: this can arrive before the page's own <script> tags (e.g. settings.js)
+// have finished their top-level execution, since the preload script runs
+// independently of page script loading. Only forward it once the window has
+// finished loading to avoid referencing not-yet-initialized page variables.
 ipcMain.on('distributionIndexDone', (event, res) => {
     distributionIndexResult = Boolean(res)
-    if(win && !win.isDestroyed()) {
+    if(pageFinishedLoading && win && !win.isDestroyed()) {
         win.webContents.send('distributionIndexDone', distributionIndexResult)
     }
 })
@@ -416,6 +421,8 @@ function setupLauncherUpdater() {
 
 function createWindow() {
 
+    pageFinishedLoading = false
+
     win = new BrowserWindow({
         width: 980,
         height: 552,
@@ -429,6 +436,20 @@ function createWindow() {
         backgroundColor: '#171614'
     })
     remoteMain.enable(win.webContents)
+    if(devToolsEnabled) {
+        win.webContents.on('console-message', (_event, level, message, line, sourceId) => {
+            console.log(`[renderer:${level}] ${sourceId}:${line} ${message}`)
+        })
+        win.webContents.on('render-process-gone', (_event, details) => {
+            console.log('[renderer-process-gone]', JSON.stringify(details))
+        })
+        win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
+            console.log('[did-fail-load]', errorCode, errorDescription, validatedURL)
+        })
+        win.webContents.on('unresponsive', () => {
+            console.log('[renderer-unresponsive]')
+        })
+    }
     win.webContents.on('before-input-event', (event, input) => {
         if(devToolsEnabled) {
             return
@@ -450,6 +471,7 @@ function createWindow() {
         if(devToolsEnabled && !win.isDestroyed()) {
             win.webContents.openDevTools({ mode: 'detach' })
         }
+        pageFinishedLoading = true
         if(distributionIndexResult !== null && win && !win.isDestroyed()) {
             win.webContents.send('distributionIndexDone', distributionIndexResult)
         }

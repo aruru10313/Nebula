@@ -4,7 +4,7 @@ const semver = require('semver')
 
 const DropinModUtil  = require('./assets/js/dropinmodutil')
 const { MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR, USER_OPTION_MODS_OPCODE, DISTRIBUTION_CLEANUP_OPCODE, LAUNCHER_UPDATE_OPCODE, LAUNCHER_UPDATE_EVENT } = require('./assets/js/ipcconstants')
-const { ipcRenderer } = require('electron')
+// ipcRenderer is already declared globally by uicore.js, which loads before this script.
 
 const settingsState = {
     invalid: new Set()
@@ -917,27 +917,27 @@ async function loadUserMods() {
         renderUserModInstalled()
         setUserModsError(`Unable to load installed personal mods: ${error.message}`)
     }
+}
 
-    async function checkUserModUpdates() {
-        try {
-            const updates = await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.CHECK_UPDATES)
-            const byProject = new Map(updates.map(update => [update.projectId, update]))
-            userModsInstalled = userModsInstalled.map(mod => ({ ...mod, ...(byProject.get(mod.projectId) || {}) }))
-            renderUserModInstalled()
-            setUserModsError(updates.length === 0 ? 'All personal mods are up to date.' : `${updates.length} personal mod update(s) available.`)
-        } catch(error) {
-            setUserModsError(`Mod update check failed: ${error.message}`)
-        }
+async function checkUserModUpdates() {
+    try {
+        const updates = await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.CHECK_UPDATES)
+        const byProject = new Map(updates.map(update => [update.projectId, update]))
+        userModsInstalled = userModsInstalled.map(mod => ({ ...mod, ...(byProject.get(mod.projectId) || {}) }))
+        renderUserModInstalled()
+        setUserModsError(updates.length === 0 ? 'All personal mods are up to date.' : `${updates.length} personal mod update(s) available.`)
+    } catch(error) {
+        setUserModsError(`Mod update check failed: ${error.message}`)
+    }
+}
 
-        async function updateAllUserMods() {
-            try {
-                await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.UPDATE_ALL)
-                await loadUserMods()
-                setUserModsError('Personal mods were updated.')
-            } catch(error) {
-                setUserModsError(`Bulk mod update failed: ${error.message}`)
-            }
-        }
+async function updateAllUserMods() {
+    try {
+        await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.UPDATE_ALL)
+        await loadUserMods()
+        setUserModsError('Personal mods were updated.')
+    } catch(error) {
+        setUserModsError(`Bulk mod update failed: ${error.message}`)
     }
 }
 
