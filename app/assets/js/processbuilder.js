@@ -9,6 +9,7 @@ const os                    = require('os')
 const path                  = require('path')
 
 const ConfigManager            = require('./configmanager')
+const UserOptionMods           = require('./useroptionmods')
 
 const logger = LoggerUtil.getLogger('ProcessBuilder')
 
@@ -68,7 +69,7 @@ class ProcessBuilder {
 
         if(mcVersionAtLeast('1.13', this.server.rawServer.minecraftVersion)){
             //args = args.concat(this.constructModArguments(modObj.fMods))
-            args = args.concat(this.constructModList(modObj.fMods))
+            args = args.concat(this.constructModList(modObj.fMods, UserOptionMods.getEnabledModPaths(ConfigManager.getLauncherDirectory())))
         }
 
         // Hide access token
@@ -303,14 +304,14 @@ class ProcessBuilder {
      * 
      * @param {Array.<Object>} mods An array of mods to add to the mod list.
      */
-    constructModList(mods) {
+    constructModList(mods, userOptionModPaths = []) {
         const writeBuffer = mods.map(mod => {
             return this.usingFabricLoader ? mod.getPath() : mod.getExtensionlessMavenIdentifier()
         }).join('\n')
 
         if(writeBuffer) {
             fs.writeFileSync(this.forgeModListFile, writeBuffer, 'UTF-8')
-            return this.usingFabricLoader ? [
+            const args = this.usingFabricLoader ? [
                 '--fabric.addMods',
                 `@${this.forgeModListFile}`
             ] : [
@@ -319,8 +320,14 @@ class ProcessBuilder {
                 '--fml.modLists',
                 this.forgeModListFile
             ]
+            if(!this.usingFabricLoader && userOptionModPaths.length > 0) {
+                args.push('--fml.mods', userOptionModPaths.join(','))
+            }
+            return args
         } else {
-            return []
+            return !this.usingFabricLoader && userOptionModPaths.length > 0
+                ? ['--fml.mods', userOptionModPaths.join(',')]
+                : []
         }
 
     }

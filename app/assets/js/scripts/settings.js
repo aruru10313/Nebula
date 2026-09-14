@@ -3,7 +3,8 @@ const os     = require('os')
 const semver = require('semver')
 
 const DropinModUtil  = require('./assets/js/dropinmodutil')
-const { MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR } = require('./assets/js/ipcconstants')
+const { MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR, USER_OPTION_MODS_OPCODE, DISTRIBUTION_CLEANUP_OPCODE, LAUNCHER_UPDATE_OPCODE, LAUNCHER_UPDATE_EVENT } = require('./assets/js/ipcconstants')
+const { ipcRenderer } = require('electron')
 
 const settingsState = {
     invalid: new Set()
@@ -789,6 +790,237 @@ function saveModConfiguration(){
     ConfigManager.setModConfiguration(serv, modConf)
 }
 
+let userModsSearchTimer
+let userModsSearchRequest = 0
+let userModsInstalled = []
+let userModsResults = []
+
+function setUserModsError(message = '') {
+    document.getElementById('settingsUserModsError').textContent = message
+}
+
+function userModsButton(label, onClick, className = '') {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.textContent = label
+    if(className) {
+        button.className = className
+    }
+    button.addEventListener('click', onClick)
+    return button
+}
+
+function renderUserModCard(project, installed = null) {
+    const card = document.createElement('div')
+    card.className = 'settingsUserModCard'
+
+    if(project.iconUrl) {
+        const icon = document.createElement('img')
+        icon.className = 'settingsUserModIcon'
+        icon.src = project.iconUrl
+        icon.alt = ''
+        card.appendChild(icon)
+    }
+
+    const info = document.createElement('div')
+    info.className = 'settingsUserModInfo'
+    const title = document.createElement('span')
+    title.className = 'settingsUserModTitle'
+    title.textContent = project.title || project.slug || project.projectId
+    const description = document.createElement('span')
+    description.className = 'settingsUserModDescription'
+    description.textContent = project.description || ''
+    info.append(title, description)
+    card.appendChild(info)
+
+    const actions = document.createElement('div')
+    actions.className = 'settingsUserModActions'
+    if(installed != null) {
+        const badge = document.createElement('span')
+        badge.className = 'settingsUserModBadge'
+        badge.textContent = installed.enabled === false ? 'Disabled' : 'Installed'
+        actions.appendChild(badge)
+        actions.appendChild(userModsButton(installed.enabled === false ? 'Enable' : 'Disable', async () => {
+            try {
+                await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.TOGGLE, installed.projectId, installed.enabled === false)
+                await loadUserMods()
+            } catch(error) {
+                setUserModsError(error.message)
+            }
+        }))
+        actions.appendChild(userModsButton('Delete', async () => {
+            try {
+                await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.DELETE, installed.projectId)
+                await loadUserMods()
+            } catch(error) {
+                setUserModsError(error.message)
+            }
+        }))
+        if(installed.updateAvailable) {
+            actions.appendChild(userModsButton(`Update to ${installed.latestVersionNumber}`, async () => {
+                try {
+                    await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.UPDATE, installed.projectId)
+                    await loadUserMods()
+                } catch(error) {
+                    setUserModsError(`Mod update failed: ${error.message}`)
+                }
+            }))
+        }
+    } else {
+        actions.appendChild(userModsButton('Details', () => showUserModDetails(project.projectId)))
+        if(userModsInstalled.some(mod => mod.projectId === project.projectId)) {
+            const badge = document.createElement('span')
+            badge.className = 'settingsUserModBadge'
+            badge.textContent = 'Installed'
+            actions.appendChild(badge)
+        }
+    }
+    card.appendChild(actions)
+    return card
+}
+
+function renderUserModResults() {
+    const container = document.getElementById('settingsUserModsResults')
+    container.replaceChildren()
+    for(const project of userModsResults) {
+        container.appendChild(renderUserModCard(project))
+    }
+    if(userModsResults.length === 0) {
+        const empty = document.createElement('div')
+        empty.className = 'settingsUserModDescription'
+        empty.textContent = 'No compatible Forge 1.20.1 mods found.'
+        container.appendChild(empty)
+    }
+}
+
+function renderUserModInstalled() {
+    const container = document.getElementById('settingsUserModsInstalled')
+    container.replaceChildren()
+    for(const mod of userModsInstalled) {
+        container.appendChild(renderUserModCard(mod, mod))
+    }
+    if(userModsInstalled.length === 0) {
+        const empty = document.createElement('div')
+        empty.className = 'settingsUserModDescription'
+        empty.textContent = 'No personal option mods installed.'
+        container.appendChild(empty)
+    }
+}
+
+async function loadUserMods() {
+    try {
+        userModsInstalled = await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.LIST)
+        renderUserModInstalled()
+        renderUserModResults()
+    } catch(error) {
+        userModsInstalled = []
+        renderUserModInstalled()
+        setUserModsError(`Unable to load installed personal mods: ${error.message}`)
+    }
+
+    async function checkUserModUpdates() {
+        try {
+            const updates = await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.CHECK_UPDATES)
+            const byProject = new Map(updates.map(update => [update.projectId, update]))
+            userModsInstalled = userModsInstalled.map(mod => ({ ...mod, ...(byProject.get(mod.projectId) || {}) }))
+            renderUserModInstalled()
+            setUserModsError(updates.length === 0 ? 'All personal mods are up to date.' : `${updates.length} personal mod update(s) available.`)
+        } catch(error) {
+            setUserModsError(`Mod update check failed: ${error.message}`)
+        }
+
+        async function updateAllUserMods() {
+            try {
+                await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.UPDATE_ALL)
+                await loadUserMods()
+                setUserModsError('Personal mods were updated.')
+            } catch(error) {
+                setUserModsError(`Bulk mod update failed: ${error.message}`)
+            }
+        }
+    }
+}
+
+async function searchUserMods() {
+    const requestId = ++userModsSearchRequest
+    setUserModsError('')
+    try {
+        const response = await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.SEARCH, {
+            query: document.getElementById('settingsUserModsSearch').value,
+            category: document.getElementById('settingsUserModsCategory').value,
+            sort: document.getElementById('settingsUserModsSort').value
+        })
+        if(requestId !== userModsSearchRequest) {
+            return
+        }
+        userModsResults = response.hits
+        renderUserModResults()
+    } catch(error) {
+        if(requestId === userModsSearchRequest) {
+            userModsResults = []
+            renderUserModResults()
+            setUserModsError(`Modrinth search failed: ${error.message}`)
+        }
+    }
+}
+
+function scheduleUserModsSearch() {
+    clearTimeout(userModsSearchTimer)
+    userModsSearchTimer = setTimeout(() => searchUserMods(), 300)
+}
+
+async function showUserModDetails(projectId) {
+    const detailsContainer = document.getElementById('settingsUserModsDetails')
+    detailsContainer.hidden = false
+    detailsContainer.textContent = 'Loading mod details...'
+    try {
+        const details = await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.DETAILS, projectId)
+        detailsContainer.replaceChildren()
+        const title = document.createElement('strong')
+        title.textContent = details.project.title
+        const description = document.createElement('p')
+        description.textContent = details.project.body?.slice(0, 500) || details.project.description || 'No description available.'
+        const versions = document.createElement('span')
+        versions.textContent = `${details.versions.length} compatible Forge ${UserOptionModsVersionLabel} version(s)`
+        const installButton = userModsButton('Install latest', async () => {
+            if(details.versions.length === 0) {
+                setUserModsError('No compatible version is available for this mod.')
+                return
+            }
+            installButton.disabled = true
+            installButton.textContent = 'Installing...'
+            try {
+                await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.INSTALL, {
+                    projectId,
+                    versionId: details.versions[0].id
+                })
+                await loadUserMods()
+                detailsContainer.hidden = true
+            } catch(error) {
+                setUserModsError(`Mod installation failed: ${error.message}`)
+                installButton.disabled = false
+                installButton.textContent = 'Install latest'
+            }
+        }, 'settingsUserModInstall')
+        detailsContainer.append(title, description, versions, installButton)
+    } catch(error) {
+        detailsContainer.textContent = ''
+        setUserModsError(`Unable to load mod details: ${error.message}`)
+    }
+}
+
+const UserOptionModsVersionLabel = '1.20.1'
+
+function bindUserModsBrowser() {
+    document.getElementById('settingsUserModsSearch').addEventListener('input', scheduleUserModsSearch)
+    document.getElementById('settingsUserModsCategory').addEventListener('change', scheduleUserModsSearch)
+    document.getElementById('settingsUserModsSort').addEventListener('change', scheduleUserModsSearch)
+    document.getElementById('settingsUserModsCheckUpdates').addEventListener('click', checkUserModUpdates)
+    document.getElementById('settingsUserModsUpdateAll').addEventListener('click', updateAllUserMods)
+}
+
+bindUserModsBrowser()
+
 /**
  * Recursively save mod config with submods.
  * 
@@ -1100,6 +1332,8 @@ async function prepareModsTab(first){
     await resolveModsForUI()
     await resolveDropinModsForUI()
     await resolveShaderpacksForUI()
+    await loadUserMods()
+    await searchUserMods()
     bindDropinModsRemoveButton()
     bindDropinModFileSystemButton()
     bindShaderpackButton()
@@ -1473,13 +1707,14 @@ function populateSettingsUpdateInformation(data){
             })
         })
     } else if(data != null){
+        settingsUpdateTitle.textContent = data.version || Lang.queryJS('settings.updates.latestVersionTitle')
     } else {
         settingsUpdateTitle.innerHTML = Lang.queryJS('settings.updates.latestVersionTitle')
         settingsUpdateChangelogCont.style.display = 'none'
         populateVersionInformation(remote.app.getVersion(), settingsUpdateVersionValue, settingsUpdateVersionTitle, settingsUpdateVersionCheck)
         settingsUpdateButtonStatus(Lang.queryJS('settings.updates.checkForUpdatesButton'), false, () => {
             settingsUpdateButtonStatus(Lang.queryJS('settings.updates.checkingForUpdatesButton'), true)
-            checkNebulaUpdates(true).catch(() => {
+            ipcRenderer.invoke(LAUNCHER_UPDATE_OPCODE.CHECK).catch(() => {
                 settingsUpdateButtonStatus(Lang.queryJS('settings.updates.checkForUpdatesButton'))
             })
         })
@@ -1493,6 +1728,109 @@ function populateSettingsUpdateInformation(data){
  */
 function prepareUpdateTab(data = null){
     populateSettingsUpdateInformation(data)
+}
+
+function setLauncherUpdateStatus(status, details = {}) {
+    const statusElement = document.getElementById('settingsLauncherStatus')
+    if(!statusElement) return
+    const messages = {
+        checking: 'Checking for launcher updates...',
+        available: `Launcher update ${details.version || ''} is downloading...`,
+        downloading: `Downloading launcher update ${details.version || ''}...`,
+        downloaded: `Launcher update ${details.version || ''} is ready to install.`,
+        'not-available': 'Nebula is up to date.',
+        error: `Launcher update failed: ${details.error?.message || details.message || 'Unknown error'}`
+    }
+    statusElement.textContent = messages[status] || status
+    if(status === 'downloaded') {
+        const button = document.getElementById('settingsLauncherCheck')
+        if(button) {
+            button.textContent = 'Restart to install'
+            button.onclick = () => ipcRenderer.invoke(LAUNCHER_UPDATE_OPCODE.INSTALL).catch(error => setLauncherUpdateStatus('error', { message: error.message }))
+        }
+    }
+}
+
+ipcRenderer.on(LAUNCHER_UPDATE_EVENT, (_event, payload) => setLauncherUpdateStatus(payload?.status || 'error', payload || {}))
+
+const launcherCheckButton = document.getElementById('settingsLauncherCheck')
+const launcherAutoUpdate = document.getElementById('settingsLauncherAutoUpdate')
+if(launcherAutoUpdate) {
+    launcherAutoUpdate.addEventListener('change', async () => {
+        try {
+            await ipcRenderer.invoke(LAUNCHER_UPDATE_OPCODE.SET_AUTO_DOWNLOAD, launcherAutoUpdate.checked)
+        } catch(error) {
+            launcherAutoUpdate.checked = !launcherAutoUpdate.checked
+            setLauncherUpdateStatus('error', { message: error.message })
+        }
+    })
+}
+if(launcherCheckButton) {
+    launcherCheckButton.addEventListener('click', async () => {
+        launcherCheckButton.disabled = true
+        try {
+            await ipcRenderer.invoke(LAUNCHER_UPDATE_OPCODE.CHECK)
+        } catch(error) {
+            setLauncherUpdateStatus('error', { message: error.message })
+        } finally {
+            launcherCheckButton.disabled = false
+        }
+    })
+}
+
+const storageScanButton = document.getElementById('settingsStorageScan')
+const storageDeleteButton = document.getElementById('settingsStorageDelete')
+let storageScanResult = null
+function formatBytes(bytes) {
+    if(bytes < 1024) return `${bytes} B`
+    const units = ['KB', 'MB', 'GB', 'TB']
+    let value = bytes
+    let unit = -1
+    do {
+        value /= 1024
+        unit += 1
+    } while(value >= 1024 && unit < units.length - 1)
+    return `${value.toFixed(value >= 10 ? 0 : 1)} ${units[unit]}`
+}
+function renderStorageScan(result) {
+    storageScanResult = result
+    document.getElementById('settingsStorageError').textContent = ''
+    document.getElementById('settingsStorageSummary').textContent = `${result.candidateCount} unused file(s), ${formatBytes(result.totalBytes)} can be reclaimed. Required server files and personal option mods are protected.`
+    const candidates = document.getElementById('settingsStorageCandidates')
+    candidates.replaceChildren()
+    for(const candidate of result.candidates) {
+        const row = document.createElement('div')
+        row.className = 'settingsStorageCandidate'
+        row.textContent = `${candidate.relativePath} (${formatBytes(candidate.size)})`
+        candidates.appendChild(row)
+    }
+    storageDeleteButton.disabled = result.candidateCount === 0
+}
+if(storageScanButton) {
+    storageScanButton.addEventListener('click', async () => {
+        storageScanButton.disabled = true
+        try {
+            renderStorageScan(await ipcRenderer.invoke(DISTRIBUTION_CLEANUP_OPCODE.SCAN))
+        } catch(error) {
+            document.getElementById('settingsStorageError').textContent = `Storage scan failed: ${error.message}`
+        } finally {
+            storageScanButton.disabled = false
+        }
+    })
+}
+if(storageDeleteButton) {
+    storageDeleteButton.addEventListener('click', async () => {
+        if(!storageScanResult || storageScanResult.candidateCount === 0 || !confirm('Delete the listed unused files?')) return
+        storageDeleteButton.disabled = true
+        try {
+            const result = await ipcRenderer.invoke(DISTRIBUTION_CLEANUP_OPCODE.DELETE, storageScanResult, { confirmed: true })
+            document.getElementById('settingsStorageSummary').textContent = `Deleted ${result.deletedCount} file(s), reclaiming ${formatBytes(result.deletedBytes)}.`
+            storageScanResult = null
+            document.getElementById('settingsStorageCandidates').replaceChildren()
+        } catch(error) {
+            document.getElementById('settingsStorageError').textContent = `Storage cleanup failed: ${error.message}`
+        }
+    })
 }
 
 /**

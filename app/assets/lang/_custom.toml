@@ -1,7 +1,7 @@
 # Custom Language File for Launcher Customizer
 
 [ejs.app]
-title = "Nebula 런처"
+title = "Nebula Launcher"
 
 [ejs.loginOptions]
 loginOptionsTitle = "로그인"
@@ -14,7 +14,7 @@ navAccount = "계정"
 navMinecraft = "마인크래프트"
 navMods = "모드"
 navJava = "Java"
-navLauncher = "런처"
+navLauncher = "Launcher"
 navAbout = "정보"
 navUpdates = "업데이트"
 navDone = "완료"
@@ -50,6 +50,6 @@ welcomeDescCTA = "다음 모험을 시작하세요."
 
 [js.auth.microsoft.error]
 noProfileTitle = "Minecraft 프로필이 없습니다"
-noProfileDesc = "이 Microsoft 계정에 Minecraft Java Edition 프로필이 없습니다. 공식 Minecraft 런처 또는 Microsoft Store에서 Java Edition을 구매·설치한 계정으로 로그인해 주세요."
+noProfileDesc = "이 Microsoft 계정에 Minecraft Java Edition 프로필이 없습니다. 공식 Minecraft Launcher 또는 Microsoft Store에서 Java Edition을 구매·설치한 계정으로 로그인해 주세요."
 noXboxAccountTitle = "Xbox 계정이 필요합니다"
 noXboxAccountDesc = "Microsoft 계정에 Xbox 프로필이 없습니다. Xbox 서비스 프로필을 만든 뒤 다시 로그인해 주세요."
