@@ -4271,16 +4271,6 @@ body::after {
     display: none;
 }
 
-/* Rotating animation for the spinner. */
-@keyframes rotating {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 /* Class which is applied when the spinner image is spinning. */
 .rotating {
     animation: none;
