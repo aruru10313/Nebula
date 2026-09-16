@@ -5750,3 +5750,122 @@ body.window-maximized #frameBar {
         max-height: min(42vh, 300px);
     }
 }
+
+
+/* Nebula visual system override. Keeps existing DOM and behavior while replacing the legacy Helios presentation. */
+:root {
+    --nebula-bg: #070a1d;
+    --nebula-deep: #040611;
+    --nebula-panel: rgba(15, 19, 47, .78);
+    --nebula-panel-strong: rgba(20, 25, 61, .94);
+    --nebula-line: rgba(139, 125, 255, .24);
+    --nebula-line-hot: rgba(139, 125, 255, .62);
+    --nebula-text: #f1f4ff;
+    --nebula-muted: #aeb5d5;
+    --nebula-subtle: #727ba8;
+    --nebula-cyan: #69d9ff;
+    --nebula-violet: #9a8cff;
+    --nebula-green: #82efbf;
+    --nebula-danger: #ff829f;
+}
+
+html, body { background: var(--nebula-bg) !important; color: var(--nebula-text); }
+body { font-family: 'Avenir Book', Inter, system-ui, sans-serif; }
+button, input, select { font-family: inherit; }
+#frameBar { background: rgba(4, 6, 17, .88); border-bottom: 1px solid var(--nebula-line); box-shadow: 0 8px 30px rgba(0,0,0,.18); }
+#frameTitleText { color: var(--nebula-muted); letter-spacing: .12em; font-size: 10px; }
+.frameButton { color: var(--nebula-muted) !important; }
+.frameButton:hover, .frameButton:focus { color: var(--nebula-cyan) !important; background: rgba(105,217,255,.08) !important; }
+
+#landingContainer { position: relative; overflow: hidden; background: radial-gradient(circle at 80% 12%, rgba(105,217,255,.12), transparent 28rem), radial-gradient(circle at 8% 50%, rgba(154,140,255,.13), transparent 32rem), var(--nebula-bg); }
+#landingContainer::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .3; background-image: radial-gradient(#fff 1px, transparent 1px), radial-gradient(#69d9ff 1px, transparent 1px); background-size: 180px 180px, 270px 270px; background-position: 20px 35px, 95px 135px; }
+#upper { position: relative; min-height: calc(100% - 132px); display: grid; grid-template-columns: minmax(0, 1fr) 150px; background: linear-gradient(90deg, rgba(4,6,17,.97), rgba(4,6,17,.62) 58%, rgba(4,6,17,.25)), url('../images/backgrounds/0.jpg') center/cover; }
+#upper::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 58%, var(--nebula-bg) 100%); }
+#upper > #content { position: relative; z-index: 1; display: flex; align-items: center; padding: 48px clamp(28px, 7vw, 90px); }
+#landingHero { max-width: 700px; }
+#landingMeta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.landingMetaChip { padding: 6px 11px; border: 1px solid rgba(105,217,255,.32); border-radius: 999px; color: var(--nebula-cyan); background: rgba(10,15,40,.72); font-size: 10px; font-weight: 800; letter-spacing: .12em; }
+.landingServerChip { display: inline-flex; gap: 8px; align-items: center; border-color: rgba(130,239,191,.3); color: var(--nebula-green); }
+#landingTitle { margin: 0 0 14px; color: var(--nebula-text); font-family: 'Avenir Medium', sans-serif; font-size: clamp(42px, 7vw, 78px); line-height: 1.02; letter-spacing: -.07em; text-shadow: 0 12px 50px rgba(0,0,0,.4); }
+#landingSubtitle { margin: 0 0 12px; color: var(--nebula-violet); font-size: clamp(18px, 2.5vw, 26px); font-weight: 700; letter-spacing: -.03em; }
+#landingDescription { max-width: 530px; margin: 0; color: var(--nebula-muted); font-size: 15px; }
+#upper > #right { position: relative; z-index: 2; display: flex; justify-content: flex-end; padding: 30px 24px 24px 0; }
+#rightContainer { width: 82px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--nebula-line); border-radius: 24px; background: rgba(10,14,38,.78); box-shadow: 0 20px 60px rgba(0,0,0,.28); backdrop-filter: blur(18px); }
+#user_content { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 14px 8px 13px; border-bottom: 1px solid var(--nebula-line); }
+#user_text { width: 100%; overflow: hidden; color: var(--nebula-muted); font-size: 9px; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+#avatarContainer { width: 40px; height: 40px; border: 1px solid var(--nebula-line-hot); border-radius: 50%; background: rgba(105,217,255,.1); overflow: hidden; }
+#avatarOverlay { width: 100%; height: 100%; color: transparent; background: transparent; border: 0; }
+#mediaContent { width: 100%; padding: 9px 7px 11px; }
+#internalMedia, #externalMedia { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.mediaContainer { width: 52px; height: 42px; display: grid; place-items: center; border-radius: 13px; transition: background .2s, transform .2s; }
+.mediaContainer:hover { background: rgba(105,217,255,.1); transform: translateY(-1px); }
+.mediaSVG { width: 20px; height: 20px; fill: var(--nebula-muted); transition: fill .2s, filter .2s; }
+.mediaContainer:hover .mediaSVG { fill: var(--nebula-cyan); filter: drop-shadow(0 0 7px rgba(105,217,255,.6)); }
+.mediaDivider { width: 36px; height: 1px; margin: 8px auto; background: var(--nebula-line); }
+#chzzkLabel { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 6px; color: var(--nebula-violet); border: 1px solid var(--nebula-line-hot); font-size: 11px; font-weight: 800; }
+#lower { position: relative; z-index: 3; display: grid; grid-template-columns: 1fr minmax(170px, 260px) 1fr; gap: 18px; height: 132px; padding: 18px 32px 24px; background: linear-gradient(180deg, transparent, var(--nebula-bg) 24%); }
+#lower > * { min-width: 0; }
+.bot_wrapper { height: 100%; border: 1px solid var(--nebula-line); border-radius: 18px; background: rgba(15,19,47,.72); box-shadow: inset 0 1px rgba(255,255,255,.04); backdrop-filter: blur(14px); }
+#lower #content, #launch_content { height: 100%; display: flex; align-items: center; justify-content: center; }
+#newsButton, #launch_button { border: 0; cursor: pointer; }
+#newsButton { display: flex; flex-direction: column; align-items: center; gap: 7px; color: var(--nebula-muted); background: transparent; font-size: 11px; letter-spacing: .12em; }
+#newsButton:hover { color: var(--nebula-cyan); }
+#newsButtonSVG { width: 16px; height: 10px; transition: transform .2s; }
+#newsButton:hover #newsButtonSVG { transform: translateY(2px); }
+#launch_content { flex-direction: column; gap: 8px; }
+#launch_button { width: calc(100% - 28px); padding: 12px 16px; border-radius: 12px; color: #071022; background: linear-gradient(135deg, var(--nebula-cyan), var(--nebula-violet)); font-size: 13px; font-weight: 850; box-shadow: 0 10px 30px rgba(105,217,255,.12); transition: transform .2s, box-shadow .2s; }
+#launch_button:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(154,140,255,.26); }
+#server_selection_button { max-width: calc(100% - 28px); overflow: hidden; color: var(--nebula-muted); background: transparent; border: 0; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+#launch_details { height: 100%; display: flex; align-items: center; padding: 0 20px; gap: 14px; }
+#launch_details_left { display: flex; align-items: center; gap: 12px; color: var(--nebula-cyan); font-size: 16px; }
+#launch_details_right { flex: 1; min-width: 0; }
+#launch_progress { width: 100%; height: 6px; accent-color: var(--nebula-cyan); }
+#launch_details_text { display: block; margin-top: 8px; overflow: hidden; color: var(--nebula-muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+#newsContainer { position: absolute; z-index: 10; inset: 0; padding: 34px; background: rgba(4,6,17,.96); backdrop-filter: blur(20px); }
+#newsContent { height: 100%; max-width: 1080px; margin: auto; display: flex; flex-direction: column; border: 1px solid var(--nebula-line); border-radius: 22px; overflow: hidden; background: var(--nebula-panel); box-shadow: 0 24px 80px rgba(0,0,0,.35); }
+#newsStatusContainer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px 28px; border-bottom: 1px solid var(--nebula-line); }
+#newsArticleTitle { color: var(--nebula-text); font-size: 23px; font-weight: 800; text-decoration: none; }
+#newsArticleTitle:hover { color: var(--nebula-cyan); }
+#newsMetaContainer { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; color: var(--nebula-subtle); font-size: 10px; }
+#newsArticleComments { color: var(--nebula-cyan); text-decoration: none; }
+#newsNavigationContainer { display: flex; align-items: center; gap: 10px; color: var(--nebula-muted); font-size: 11px; }
+#newsNavigationContainer button { width: 30px; height: 30px; border: 1px solid var(--nebula-line); border-radius: 50%; background: rgba(105,217,255,.06); cursor: pointer; }
+#newsNavigationContainer svg { width: 12px; height: 8px; }
+#newsNavigateRight svg { transform: rotate(90deg); } #newsNavigateLeft svg { transform: rotate(-90deg); }
+#newsArticleContainer, #newsArticleContent, #newsArticleContentScrollable { min-height: 0; flex: 1; }
+#newsArticleContentScrollable { overflow-y: auto; padding: 28px 34px 42px; }
+.newsArticleImage { display: block; width: 100%; max-height: 300px; object-fit: cover; border: 1px solid var(--nebula-line); border-radius: 15px; }
+.newsArticleBody { color: var(--nebula-muted); font-size: 14px; line-height: 1.75; }
+.newsArticleBody a { color: var(--nebula-cyan); }
+#settingsContainer { background: radial-gradient(circle at 75% 0, rgba(105,217,255,.08), transparent 30rem), var(--nebula-bg); }
+#settingsContainerLeft { background: rgba(7,10,29,.82); border-right: 1px solid var(--nebula-line); }
+#settingsNavHeader { color: var(--nebula-text); letter-spacing: .08em; }
+.settingsNavItem { margin: 3px 12px; border-radius: 11px; color: var(--nebula-muted); transition: background .2s, color .2s; }
+.settingsNavItem:hover, .settingsNavItem:focus { color: var(--nebula-text); background: rgba(105,217,255,.08); }
+.settingsNavItem[selected] { color: var(--nebula-cyan); background: linear-gradient(90deg, rgba(105,217,255,.14), rgba(154,140,255,.08)); box-shadow: inset 3px 0 var(--nebula-cyan); }
+#settingsNavDone { margin: 12px; border: 1px solid var(--nebula-line-hot); border-radius: 11px; color: var(--nebula-text); background: rgba(105,217,255,.08); }
+#settingsContainerRight { background: transparent; }
+.settingsTab { padding: 34px 38px; }
+.settingsTabHeader { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--nebula-line); }
+.settingsTabHeaderText { color: var(--nebula-text); font-size: 25px; letter-spacing: -.04em; }
+.settingsTabHeaderDesc { color: var(--nebula-muted); }
+.settingsFieldContainer, .settingsFileSelContainer, .settingsAuthAccount, .settingsSelServContainer, #settingsReqModsContainer, #settingsOptModsContainer, #settingsUserModsContainer, #settingsDropinModsContainer { border-color: var(--nebula-line); border-radius: 14px; background: rgba(15,19,47,.52); }
+#settingsReqModsContent, #settingsOptModsContent, #settingsUserModsInstalled, #settingsDropinModsContent { border: 1px solid var(--nebula-line); border-radius: 12px; background: rgba(4,6,17,.28); }
+#settingsUserModsControls input, #settingsUserModsControls select, #settingsContainer input[type=number], #settingsContainer input[type=text] { border: 1px solid var(--nebula-line-hot); border-radius: 9px; color: var(--nebula-text); background: rgba(7,10,29,.72); }
+.settingsUserModCard { border-color: var(--nebula-line); border-radius: 11px; background: rgba(15,19,47,.72); }
+.settingsUserModActions button, .settingsUserModInstall { border-radius: 8px; background: linear-gradient(135deg, var(--nebula-violet), #6c62c4); }
+.settingsDropinMod, .settingsMod { border-bottom: 1px solid rgba(139,125,255,.12); }
+
+@media (max-width: 760px) {
+    #upper { grid-template-columns: 1fr 84px; }
+    #upper > #right { padding-right: 10px; }
+    #rightContainer { width: 68px; }
+    #lower { grid-template-columns: 1fr; height: auto; padding: 12px 18px 18px; }
+    #lower > #left { display: none; }
+    #lower > #center, #lower > #right { min-height: 76px; }
+    #newsContainer { padding: 15px; }
+    #newsStatusContainer { align-items: flex-start; flex-direction: column; padding: 18px; }
+    #newsArticleTitle { font-size: 19px; word-break: keep-all; }
+    #newsArticleContentScrollable { padding: 20px; }
+    .settingsTab { padding: 24px 20px; }
+}
