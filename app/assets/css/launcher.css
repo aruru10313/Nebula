@@ -5774,10 +5774,10 @@ button, input, select { font-family: inherit; }
 .frameButton { color: var(--nebula-muted) !important; }
 .frameButton:hover, .frameButton:focus { color: var(--nebula-cyan) !important; background: rgba(105,217,255,.08) !important; }
 
-#landingContainer { position: relative; overflow: hidden; background: radial-gradient(circle at 80% 12%, rgba(105,217,255,.12), transparent 28rem), radial-gradient(circle at 8% 50%, rgba(154,140,255,.13), transparent 32rem), var(--nebula-bg); }
+#landingContainer { position: relative; overflow: hidden; background: radial-gradient(circle at 80% 12%, rgba(105,217,255,.12), transparent 28rem), radial-gradient(circle at 8% 50%, rgba(154,140,255,.13), transparent 32rem), linear-gradient(rgba(4,6,17,.42), rgba(4,6,17,.82)), url('../images/backgrounds/0.jpg') center center / cover no-repeat, var(--nebula-bg); }
 #landingContainer::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .3; background-image: radial-gradient(#fff 1px, transparent 1px), radial-gradient(#69d9ff 1px, transparent 1px); background-size: 180px 180px, 270px 270px; background-position: 20px 35px, 95px 135px; }
 #landingContainer { display: grid; grid-template-rows: minmax(0, 1fr) auto; }
-#upper { position: relative; min-height: 0; height: auto; display: grid; grid-template-columns: minmax(0, 1fr) 150px; background: linear-gradient(90deg, rgba(4,6,17,.97), rgba(4,6,17,.62) 58%, rgba(4,6,17,.25)), url('../images/backgrounds/0.jpg') center/cover; }
+#upper { position: relative; min-height: 0; height: auto; display: grid; grid-template-columns: minmax(0, 1fr) 150px; background: linear-gradient(90deg, rgba(4,6,17,.76), rgba(4,6,17,.32) 58%, rgba(4,6,17,.12)); }
 #upper::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 58%, var(--nebula-bg) 100%); }
 #upper > #content { position: relative; z-index: 1; display: flex; align-items: center; padding: 48px clamp(28px, 7vw, 90px); }
 #landingHero { max-width: 700px; }
