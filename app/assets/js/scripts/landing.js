@@ -49,6 +49,7 @@ function loadNewsImageFallback(image, imageUrl){
             reject(error)
             return
         }
+
         if(parsedImageUrl.protocol !== 'https:' || parsedImageUrl.hostname !== 'mc.aruru.kr'){
             reject(new Error('News image host is not allowed'))
             return
@@ -223,7 +224,7 @@ function updateSelectedServer(serv){
     }
     ConfigManager.setSelectedServer(serv != null ? serv.rawServer.id : null)
     ConfigManager.save()
-    server_selection_button.innerHTML = '&#8226; ' + (serv != null ? serv.rawServer.name : Lang.queryJS('landing.noSelection'))
+    server_selection_button.innerHTML = '&#8226; ' + (serv != null ? serv.rawServer.name : Lang.queryJS('landing.selectedServer.noSelection'))
     if(getCurrentView() === VIEWS.settings){
         animateSettingsTabRefresh()
     }
@@ -475,7 +476,7 @@ async function dlAsync(login = true) {
 
     fullRepairModule.childProcess.on('error', (err) => {
         loggerLaunchSuite.error('Error during launch', err)
-        showLaunchFailure(Lang.queryJS('landing.dlAsync.errorDuringLaunchTitle'), err.message || Lang.queryJS('landing.dlAsync.errorDuringLaunchText'))
+        showLaunchFailure(Lang.queryJS('landing.dlAsync.errorDuringLaunchTitle'), err.message || Lang.queryJS('landing.dlAsync.seeConsoleForDetails'))
     })
     fullRepairModule.childProcess.on('close', (code, _signal) => {
         if(code !== 0){
@@ -641,7 +642,12 @@ const newsArticleAuthor             = document.getElementById('newsArticleAuthor
 const newsArticleComments           = document.getElementById('newsArticleComments')
 const newsNavigationStatus          = document.getElementById('newsNavigationStatus')
 const newsArticleContentScrollable  = document.getElementById('newsArticleContentScrollable')
+const newsScrollTop                 = document.getElementById('newsScrollTop')
 const nELoadSpan                    = document.getElementById('nELoadSpan')
+
+newsScrollTop.onclick = () => {
+    newsArticleContentScrollable.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 // News slide caches.
 let newsActive = false

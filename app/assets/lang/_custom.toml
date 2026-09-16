@@ -28,7 +28,7 @@ whatsNew = "서버팩 변경 사항"
 updateReleaseNotes = "Nebula 콘텐츠 정보"
 noReleaseNotes = "서버에서 최신 모드와 파일 정보를 확인할 수 있습니다."
 sourceGithubLink = "#"
-supportLink = "https://discord.gg/f7ZwWCfUaA"
+supportLink = "https://discord.gg/xpx4kS9Ztu"
 
 [ejs.landing]
 usernamePlaceholder = "계정 없음"
@@ -39,9 +39,10 @@ serverStatusPlaceholder = "확인 중..."
 launchButton = "플레이"
 launchButtonPlaceholder = "서버 선택"
 newsButton = "소식"
-mediaYouTubeURL = "https://www.youtube.com/channel/UCVog5egglbpsa3gHU_0HC1w"
-mediaChzzkURL = "https://chzzk.naver.com/f7cfac39277fbe58f0f7edc632e13d52"
-mediaDiscordURL = "https://discord.gg/f7ZwWCfUaA"
+newsScrollTop = "맨 위로"
+mediaYouTubeURL = "https://www.youtube.com/@Silly_Hyun"
+mediaChzzkURL = "https://chzzk.naver.com/c2719f9ef917e97f0782e1430f0bfee8"
+mediaDiscordURL = "https://discord.gg/xpx4kS9Ztu"
 
 [ejs.welcome]
 welcomeHeader = "NEBULA에 오신 것을 환영합니다"

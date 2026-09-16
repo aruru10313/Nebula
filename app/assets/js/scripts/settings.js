@@ -11,6 +11,26 @@ const settingsState = {
     invalid: new Set()
 }
 
+function bindAuthAccountCopyUuid(){
+    Array.from(document.getElementsByClassName('settingsAuthAccountCopyUuid')).forEach((button) => {
+        button.onclick = async () => {
+            const uuid = button.getAttribute('data-uuid')
+            if(!uuid){
+                return
+            }
+            if(!navigator.clipboard){
+                return
+            }
+            await navigator.clipboard.writeText(uuid)
+            const originalText = button.innerHTML
+            button.innerHTML = Lang.queryJS('settings.authAccountPopulate.uuidCopied')
+            setTimeout(() => {
+                button.innerHTML = originalText
+            }, 1500)
+        }
+    })
+}
+
 function bindSettingsSelect(){
     for(let ele of document.getElementsByClassName('settingsSelectContainer')) {
         const selectedDiv = ele.getElementsByClassName('settingsSelectSelected')[0]
@@ -609,25 +629,28 @@ function populateAuthAccounts(){
 
     authKeys.forEach((val) => {
         const acc = authAccounts[val]
+        const displayName = escapeHtml(acc.displayName)
+        const uuid = escapeHtml(acc.uuid)
 
-        const accHtml = `<div class="settingsAuthAccount" uuid="${acc.uuid}">
+        const accHtml = `<div class="settingsAuthAccount" uuid="${uuid}">
             <div class="settingsAuthAccountLeft">
-                <img class="settingsAuthAccountImage" alt="${acc.displayName}" src="https://mc-heads.net/body/${acc.uuid}/60">
+                <img class="settingsAuthAccountImage" alt="${displayName}" src="https://mc-heads.net/body/${uuid}/60" onerror="this.onerror=null;this.src='./assets/images/nebula-icon.png';">
             </div>
             <div class="settingsAuthAccountRight">
                 <div class="settingsAuthAccountDetails">
                     <div class="settingsAuthAccountDetailPane">
                         <div class="settingsAuthAccountDetailTitle">${Lang.queryJS('settings.authAccountPopulate.username')}</div>
-                        <div class="settingsAuthAccountDetailValue">${acc.displayName}</div>
+                        <div class="settingsAuthAccountDetailValue">${displayName}</div>
                     </div>
                     <div class="settingsAuthAccountDetailPane">
                         <div class="settingsAuthAccountDetailTitle">${Lang.queryJS('settings.authAccountPopulate.uuid')}</div>
-                        <div class="settingsAuthAccountDetailValue">${acc.uuid}</div>
+                        <div class="settingsAuthAccountDetailValue">${uuid}</div>
                     </div>
                 </div>
                 <div class="settingsAuthAccountActions">
                     <button class="settingsAuthAccountSelect" ${selectedUUID === acc.uuid ? 'selected>' + Lang.queryJS('settings.authAccountPopulate.selectedAccount') : '>' + Lang.queryJS('settings.authAccountPopulate.selectAccount')}</button>
                     <div class="settingsAuthAccountWrapper">
+                        <button class="settingsAuthAccountCopyUuid" data-uuid="${uuid}">${Lang.queryJS('settings.authAccountPopulate.copyUuid')}</button>
                         <button class="settingsAuthAccountLogOut">${Lang.queryJS('settings.authAccountPopulate.logout')}</button>
                     </div>
                 </div>
@@ -650,6 +673,7 @@ function prepareAccountsTab() {
     populateAuthAccounts()
     bindAuthAccountSelect()
     bindAuthAccountLogOut()
+    bindAuthAccountCopyUuid()
 }
 
 /**
@@ -1658,7 +1682,7 @@ function populateAboutVersionInformation(){
 }
 
 function populateReleaseNotes(){
-    settingsAboutChangelogTitle.innerHTML = Lang.queryJS('settings.changelog')
+    settingsAboutChangelogTitle.innerHTML = Lang.queryEJS('settings.changelog')
     settingsAboutChangelogText.innerHTML = Lang.queryJS('settings.about.nebulaReleaseNotes')
 }
 

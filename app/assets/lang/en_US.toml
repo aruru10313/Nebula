@@ -9,6 +9,7 @@ mojangStatus = "MOJANG STATUS"
 mojangStatusTooltipTitle = "Services"
 mojangStatusNETitle = "Non&nbsp;Essential"
 newsButton = "NEWS"
+newsScrollTop = "Back to top"
 launchButton = "PLAY"
 launchButtonPlaceholder = "&#8226; No Server Selected"
 launchDetails = "Please wait.."
@@ -222,12 +223,7 @@ dismiss = "Dismiss"
 executables = "Executables"
 allFiles = "All Files"
 
-[js.settings.mstfLogin]
-errorTitle = "Something Went Wrong"
-errorMessage = "Microsoft authentication failed. Please try again."
-okButton = "OK"
-
-[js.settings.mstfLogout]
+[js.settings.msftLogout]
 errorTitle = "Something Went Wrong"
 errorMessage = "Microsoft logout failed. Please try again."
 okButton = "OK"
@@ -248,6 +244,8 @@ uuid = "UUID"
 selectAccount = "Select Account"
 selectedAccount = "Selected Account ✓"
 logout = "Log Out"
+copyUuid = "Copy UUID"
+uuidCopied = "Copied"
 
 [js.settings.dropinMods]
 removeButton = "Remove"
