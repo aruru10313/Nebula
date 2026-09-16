@@ -23,6 +23,7 @@ const {
 const LangLoader                        = require('./app/assets/js/langloader')
 const devToolsEnabled                   = process.env.NEBULA_DEVTOOLS === '1'
 const ModrinthAPI                       = require('./app/assets/js/modrinthapi')
+const UserOptionMods                     = require('./app/assets/js/useroptionmods')
 const DistributionCleanup               = require('./app/assets/js/distributioncleanup')
 
 // Setup Lang
@@ -80,6 +81,10 @@ function getUserModsDirectory() {
     return app.getPath('userData')
 }
 
+ipcMain.handle(USER_OPTION_MODS_OPCODE.SET_VERSION, (_event, gameVersion) => {
+    UserOptionMods.setActiveGameVersion(gameVersion)
+    return UserOptionMods.GAME_VERSION
+})
 ipcMain.handle(USER_OPTION_MODS_OPCODE.SEARCH, (_event, params) => ModrinthAPI.search(params))
 ipcMain.handle(USER_OPTION_MODS_OPCODE.DETAILS, (_event, projectId) => ModrinthAPI.getDetails(projectId))
 ipcMain.handle(USER_OPTION_MODS_OPCODE.LIST, () => ModrinthAPI.listInstalled(getUserModsDirectory()))

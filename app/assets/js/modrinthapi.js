@@ -129,7 +129,7 @@ async function install(launcherDirectory, { projectId, versionId } = {}) {
     const versions = await getCompatibleVersions(projectId)
     const version = versions.find(candidate => candidate.id === versionId) || versions[0]
     if(version == null || !Array.isArray(version.files) || version.files.length === 0) {
-        throw new Error('No Forge 1.20.1 version is available for this Modrinth project.')
+        throw new Error(`No Forge ${UserOptionMods.GAME_VERSION} version is available for this Modrinth project.`)
     }
     const file = version.files.find(candidate => candidate.primary) || version.files[0]
     validateDownloadUrl(file.url)

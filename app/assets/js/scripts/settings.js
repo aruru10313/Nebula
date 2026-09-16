@@ -3,6 +3,7 @@ const os     = require('os')
 const semver = require('semver')
 
 const DropinModUtil  = require('./assets/js/dropinmodutil')
+const UserOptionMods = require('./assets/js/useroptionmods')
 const { MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR, USER_OPTION_MODS_OPCODE, DISTRIBUTION_CLEANUP_OPCODE, LAUNCHER_UPDATE_OPCODE, LAUNCHER_UPDATE_EVENT } = require('./assets/js/ipcconstants')
 // ipcRenderer is already declared globally by uicore.js, which loads before this script.
 
@@ -993,7 +994,7 @@ async function showUserModDetails(projectId) {
         const description = document.createElement('p')
         description.textContent = details.project.body?.slice(0, 500) || details.project.description || 'No description available.'
         const versions = document.createElement('span')
-        versions.textContent = `${details.versions.length} compatible Forge ${UserOptionModsVersionLabel} version(s)`
+        versions.textContent = `${details.versions.length} compatible Forge ${UserOptionMods.GAME_VERSION} version(s)`
         const installButton = userModsButton('Install latest', async () => {
             if(details.versions.length === 0) {
                 setUserModsError('No compatible version is available for this mod.')
@@ -1021,7 +1022,6 @@ async function showUserModDetails(projectId) {
     }
 }
 
-const UserOptionModsVersionLabel = '1.20.1'
 
 function bindUserModsBrowser() {
     document.getElementById('settingsUserModsSearch').addEventListener('input', scheduleUserModsSearch)
@@ -1341,6 +1341,9 @@ function animateSettingsTabRefresh(){
  * Prepare the Mods tab for display.
  */
 async function prepareModsTab(first){
+    const selectedServer = (await DistroAPI.getDistribution()).getServerById(ConfigManager.getSelectedServer())
+    UserOptionMods.setActiveGameVersion(selectedServer.rawServer.minecraftVersion)
+    await ipcRenderer.invoke(USER_OPTION_MODS_OPCODE.SET_VERSION, selectedServer.rawServer.minecraftVersion)
     await resolveModsForUI()
     await resolveDropinModsForUI()
     await resolveShaderpacksForUI()

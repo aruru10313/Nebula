@@ -2,48 +2,69 @@ const fs = require('fs-extra')
 const path = require('path')
 
 const MANIFEST_VERSION = 1
-const GAME_VERSION = '1.20.1'
+const DEFAULT_GAME_VERSION = '1.20.1'
 const LOADER = 'forge'
 const DIRECTORY_NAME = 'user-option-mods'
+let activeGameVersion = DEFAULT_GAME_VERSION
 
-function getRoot(launcherDirectory) {
-    return path.join(launcherDirectory, DIRECTORY_NAME)
+function normalizeGameVersion(gameVersion) {
+    if(typeof gameVersion !== 'string' || !/^\d+\.\d+(?:\.\d+)?$/.test(gameVersion)) {
+        throw new Error('Invalid Minecraft version.')
+    }
+    return gameVersion
 }
 
-function getModsDirectory(launcherDirectory) {
-    return path.join(getRoot(launcherDirectory), 'mods')
+function getGameVersion(gameVersion) {
+    return normalizeGameVersion(gameVersion || activeGameVersion)
 }
 
-function getManifestPath(launcherDirectory) {
-    return path.join(getRoot(launcherDirectory), 'manifest.json')
+function setActiveGameVersion(gameVersion) {
+    activeGameVersion = normalizeGameVersion(gameVersion)
+}
+
+function getRoot(launcherDirectory, gameVersion) {
+    return path.join(launcherDirectory, DIRECTORY_NAME, getGameVersion(gameVersion), LOADER)
+}
+
+function getModsDirectory(launcherDirectory, gameVersion) {
+    return path.join(getRoot(launcherDirectory, gameVersion), 'mods')
+}
+
+function getManifestPath(launcherDirectory, gameVersion) {
+    return path.join(getRoot(launcherDirectory, gameVersion), 'manifest.json')
 }
 
 function emptyManifest() {
     return {
         version: MANIFEST_VERSION,
-        gameVersion: GAME_VERSION,
+        gameVersion: getGameVersion(),
         loader: LOADER,
         mods: []
     }
 }
 
-async function readManifest(launcherDirectory) {
-    const manifestPath = getManifestPath(launcherDirectory)
+async function readManifest(launcherDirectory, gameVersion) {
+    const selectedGameVersion = getGameVersion(gameVersion)
+    const manifestPath = getManifestPath(launcherDirectory, selectedGameVersion)
     if(!(await fs.pathExists(manifestPath))) {
         return emptyManifest()
     }
 
     const manifest = await fs.readJson(manifestPath)
-    if(manifest.version !== MANIFEST_VERSION || manifest.gameVersion !== GAME_VERSION || manifest.loader !== LOADER || !Array.isArray(manifest.mods)) {
+    if(manifest.version !== MANIFEST_VERSION || manifest.gameVersion !== selectedGameVersion || manifest.loader !== LOADER || !Array.isArray(manifest.mods)) {
         throw new Error('The personal mod manifest is invalid or uses an unsupported format.')
     }
     manifest.mods.forEach(mod => validateFileName(mod.fileName))
     return manifest
 }
 
-async function writeManifest(launcherDirectory, manifest) {
-    await fs.ensureDir(getModsDirectory(launcherDirectory))
-    await fs.writeJson(getManifestPath(launcherDirectory), manifest, { spaces: 2 })
+async function writeManifest(launcherDirectory, manifest, gameVersion) {
+    const selectedGameVersion = getGameVersion(gameVersion || manifest.gameVersion)
+    if(manifest.gameVersion !== selectedGameVersion) {
+        throw new Error('The personal mod manifest version does not match the selected Minecraft version.')
+    }
+    await fs.ensureDir(getModsDirectory(launcherDirectory, selectedGameVersion))
+    await fs.writeJson(getManifestPath(launcherDirectory, selectedGameVersion), manifest, { spaces: 2 })
 }
 
 function validateProjectId(projectId) {
@@ -58,14 +79,15 @@ function validateFileName(fileName) {
     }
 }
 
-function getEnabledModPaths(launcherDirectory) {
-    const manifestPath = getManifestPath(launcherDirectory)
+function getEnabledModPaths(launcherDirectory, gameVersion) {
+    const selectedGameVersion = getGameVersion(gameVersion)
+    const manifestPath = getManifestPath(launcherDirectory, selectedGameVersion)
     if(!fs.existsSync(manifestPath)) {
         return []
     }
 
     const manifest = fs.readJsonSync(manifestPath)
-    if(manifest.version !== MANIFEST_VERSION || manifest.gameVersion !== GAME_VERSION || manifest.loader !== LOADER || !Array.isArray(manifest.mods)) {
+    if(manifest.version !== MANIFEST_VERSION || manifest.gameVersion !== selectedGameVersion || manifest.loader !== LOADER || !Array.isArray(manifest.mods)) {
         throw new Error('The personal mod manifest is invalid or uses an unsupported format.')
     }
 
@@ -77,11 +99,13 @@ function getEnabledModPaths(launcherDirectory) {
             validateFileName(mod.fileName)
             return mod.enabled !== false
         })
-        .map(mod => path.join(getModsDirectory(launcherDirectory), mod.fileName))
+        .map(mod => path.join(getModsDirectory(launcherDirectory, selectedGameVersion), mod.fileName))
         .filter(filePath => fs.existsSync(filePath))
 }
 
-exports.GAME_VERSION = GAME_VERSION
+exports.DEFAULT_GAME_VERSION = DEFAULT_GAME_VERSION
+exports.setActiveGameVersion = setActiveGameVersion
+Object.defineProperty(exports, 'GAME_VERSION', { enumerable: true, get: () => activeGameVersion })
 exports.LOADER = LOADER
 exports.getRoot = getRoot
 exports.getModsDirectory = getModsDirectory

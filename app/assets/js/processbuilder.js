@@ -81,8 +81,9 @@ class ProcessBuilder {
         let args = this.constructJVMArguments(uberModArr, tempNativePath)
 
         if(mcVersionAtLeast('1.13', this.server.rawServer.minecraftVersion)){
+            UserOptionMods.setActiveGameVersion(this.server.rawServer.minecraftVersion)
             //args = args.concat(this.constructModArguments(modObj.fMods))
-            args = args.concat(this.constructModList(modObj.fMods, UserOptionMods.getEnabledModPaths(ConfigManager.getLauncherDirectory())))
+            args = args.concat(this.constructModList(modObj.fMods, UserOptionMods.getEnabledModPaths(ConfigManager.getLauncherDirectory(), this.server.rawServer.minecraftVersion)))
         }
 
         // Hide access token
