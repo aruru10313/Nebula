@@ -481,6 +481,10 @@ async function dlAsync(login = true) {
     )
 
     fullRepairModule.spawnReceiver()
+    const cleanupRepair = () => {
+        remote.getCurrentWindow().setProgressBar(-1)
+        fullRepairModule.destroyReceiver()
+    }
 
     fullRepairModule.childProcess.on('error', (err) => {
         loggerLaunchSuite.error('Error during launch', err)
@@ -504,6 +508,7 @@ async function dlAsync(login = true) {
     } catch (err) {
         loggerLaunchSuite.error('Error during file validation.')
         showLaunchFailure(Lang.queryJS('landing.dlAsync.errorDuringFileVerificationTitle'), err.displayable || Lang.queryJS('landing.dlAsync.seeConsoleForDetails'))
+        cleanupRepair()
         return
     }
     
@@ -520,6 +525,7 @@ async function dlAsync(login = true) {
         } catch(err) {
             loggerLaunchSuite.error('Error during file download.')
             showLaunchFailure(Lang.queryJS('landing.dlAsync.errorDuringFileDownloadTitle'), err.displayable || Lang.queryJS('landing.dlAsync.seeConsoleForDetails'))
+            cleanupRepair()
             return
         }
     } else {
@@ -527,9 +533,7 @@ async function dlAsync(login = true) {
     }
 
     // Remove download bar.
-    remote.getCurrentWindow().setProgressBar(-1)
-
-    fullRepairModule.destroyReceiver()
+    cleanupRepair()
 
     setLaunchDetails(Lang.queryJS('landing.dlAsync.preparingToLaunch'))
 
