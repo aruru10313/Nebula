@@ -14,3 +14,7 @@ distribution/servers/
 /news-service/node_modules/
 /news-service/admin-dist/
 /news-service/generated/
+
+# Keep only the repository root README public.
+*.md
+!/README.md
