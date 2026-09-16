@@ -29,8 +29,10 @@ loginOptionMicrosoft.onclick = (e) => {
 
 loginOptionsCancelButton.onclick = (e) => {
     switchView(getCurrentView(), loginOptionsViewOnCancel, 500, 500, () => {
-        loginUsername.value = ''
-        loginPassword.value = ''
+        const userField = document.getElementById('loginUsername')
+        const passField = document.getElementById('loginPassword')
+        if(userField) userField.value = ''
+        if(passField) passField.value = ''
         if(loginOptionsViewCancelHandler != null){
             loginOptionsViewCancelHandler()
             loginOptionsViewCancelHandler = null

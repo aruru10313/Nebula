@@ -88,7 +88,12 @@ class ProcessBuilder {
 
         // Hide access token
         const loggableArgs = [...args]
-        loggableArgs[loggableArgs.findIndex(x => x === this.authUser.accessToken)] = '**********'
+        if(this.authUser && this.authUser.accessToken){
+            const tokenIndex = loggableArgs.findIndex(x => x === this.authUser.accessToken)
+            if(tokenIndex !== -1){
+                loggableArgs[tokenIndex] = '**********'
+            }
+        }
 
         logger.info('Launch Arguments:', loggableArgs)
 

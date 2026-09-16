@@ -155,8 +155,24 @@ function setLaunchEnabled(val){
 document.getElementById('launch_button').addEventListener('click', async e => {
     loggerLanding.info('Launching game..')
     try {
-        const server = (await DistroAPI.getDistribution()).getServerById(ConfigManager.getSelectedServer())
-        const jExe = ConfigManager.getJavaExecutable(ConfigManager.getSelectedServer())
+        const distro = await DistroAPI.getDistribution()
+        const selectedServer = ConfigManager.getSelectedServer()
+        const server = distro ? distro.getServerById(selectedServer) : null
+        if(!server){
+            showLaunchFailure(
+                Lang.queryJS('landing.launch.failureTitle') || 'Server Not Found',
+                Lang.queryJS('landing.selectedServer.noSelection') || 'No server is selected or available.'
+            )
+            return
+        }
+        if(!ConfigManager.getSelectedAccount()){
+            showLaunchFailure(
+                Lang.queryJS('landing.launch.failureTitle') || 'Login Required',
+                Lang.queryJS('landing.selectedAccount.noAccountSelected') || 'You must be logged into a Microsoft account to launch the game.'
+            )
+            return
+        }
+        const jExe = ConfigManager.getJavaExecutable(selectedServer)
         if(jExe == null){
             await asyncSystemScan(server.effectiveJavaOptions)
         } else {
@@ -222,6 +238,11 @@ function updateSelectedAccount(authUser){
         }
     }
     user_text.innerHTML = username
+    const avatarOverlay = document.getElementById('avatarOverlay')
+    if(avatarOverlay){
+        avatarOverlay.title = username
+    }
+    avatarImage.title = username
 }
 updateSelectedAccount(ConfigManager.getSelectedAccount())
 
@@ -255,13 +276,15 @@ const refreshServerStatus = async (fade = false) => {
             DistroAPI.getDistribution(),
             new Promise((_, reject) => setTimeout(() => reject(new Error('Distribution request timed out.')), 10000))
         ])
-        const serv = distribution.getServerById(ConfigManager.getSelectedServer())
+        const serv = distribution ? distribution.getServerById(ConfigManager.getSelectedServer()) : null
         if(serv == null) {
             throw new Error('No selected server is available.')
         }
-        const servStat = await getServerStatus(47, serv.hostname, serv.port)
+        const servStat = await getServerStatus(763, serv.hostname, serv.port)
         pLabel = Lang.queryJS('landing.serverStatus.players')
-        pVal = servStat.players.online + '/' + servStat.players.max
+        const onlineCount = servStat?.players?.online ?? 0
+        const maxCount = servStat?.players?.max ?? '?'
+        pVal = onlineCount + '/' + maxCount
 
     } catch (err) {
         loggerLanding.warn('Unable to refresh server status, showing offline.')
@@ -410,6 +433,37 @@ const GAME_JOINED_REGEX = /\[.+\]: Sound engine started/
 const GAME_LAUNCH_REGEX = /^\[.+\]: (?:MinecraftForge .+ Initialized|ModLauncher .+ starting: .+|Loading Minecraft .+ with Fabric Loader .+)$/
 const MIN_LINGER = 5000
 
+window.nebulaDownloadUpdates = async function() {
+    const distro = await DistroAPI.refreshDistributionOrFallback()
+    const serverId = ConfigManager.getSelectedServer()
+    if(!serverId){
+        throw new Error('No server is selected.')
+    }
+    const repair = new ReliableRepair(
+        ConfigManager.getCommonDirectory(),
+        ConfigManager.getInstanceDirectory(),
+        ConfigManager.getLauncherDirectory(),
+        serverId,
+        DistroAPI.isDevMode(),
+        distro
+    )
+
+    repair.spawnReceiver()
+    try {
+        const invalidFileCount = await repair.verifyFiles(() => {})
+        if(invalidFileCount > 0) {
+            await repair.download(percent => {
+                remote.getCurrentWindow().setProgressBar(percent / 100)
+            })
+        }
+        loggerLanding.info(`Nebula content update complete for ${serverId}.`)
+        return distro
+    } finally {
+        remote.getCurrentWindow().setProgressBar(-1)
+        repair.destroyReceiver()
+    }
+}
+
 async function dlAsync(login = true) {
 
     // Login parameter is temporary for debug purposes. Allows testing the validation/downloads without
@@ -430,39 +484,24 @@ async function dlAsync(login = true) {
         return
     }
 
-    window.nebulaDownloadUpdates = async function() {
-        const distro = await DistroAPI.refreshDistributionOrFallback()
-        const serverId = ConfigManager.getSelectedServer()
-        const repair = new ReliableRepair(
-            ConfigManager.getCommonDirectory(),
-            ConfigManager.getInstanceDirectory(),
-            ConfigManager.getLauncherDirectory(),
-            serverId,
-            DistroAPI.isDevMode(),
-            distro
+    const selectedServerId = ConfigManager.getSelectedServer()
+    const serv = distro ? distro.getServerById(selectedServerId) : null
+    if(!serv){
+        loggerLaunchSuite.error(`Selected server ${selectedServerId} not found in distribution.`)
+        showLaunchFailure(
+            Lang.queryJS('landing.launch.failureTitle') || 'Server Not Found',
+            Lang.queryJS('landing.selectedServer.noSelection') || 'No server is selected or available.'
         )
-
-        repair.spawnReceiver()
-        try {
-            const invalidFileCount = await repair.verifyFiles(() => {})
-            if(invalidFileCount > 0) {
-                await repair.download(percent => {
-                    remote.getCurrentWindow().setProgressBar(percent / 100)
-                })
-            }
-            loggerLanding.info(`Nebula content update complete for ${serverId}.`)
-            return distro
-        } finally {
-            remote.getCurrentWindow().setProgressBar(-1)
-            repair.destroyReceiver()
-        }
+        return
     }
-
-    const serv = distro.getServerById(ConfigManager.getSelectedServer())
 
     if(login) {
         if(ConfigManager.getSelectedAccount() == null){
-            loggerLanding.error('You must be logged into an account.')
+            loggerLaunchSuite.error('You must be logged into an account.')
+            showLaunchFailure(
+                Lang.queryJS('landing.launch.failureTitle') || 'Login Required',
+                Lang.queryJS('landing.selectedAccount.noAccountSelected') || 'You must be logged into a Microsoft account.'
+            )
             return
         }
     }

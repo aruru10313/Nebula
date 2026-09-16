@@ -618,12 +618,14 @@ const settingsCurrentMicrosoftAccounts = document.getElementById('settingsCurren
  * Add auth account elements for each one stored in the authentication database.
  */
 function populateAuthAccounts(){
-    const authAccounts = ConfigManager.getAuthAccounts()
+    const authAccounts = ConfigManager.getAuthAccounts() || {}
     const authKeys = Object.keys(authAccounts)
     if(authKeys.length === 0){
+        settingsCurrentMicrosoftAccounts.innerHTML = ''
         return
     }
-    const selectedUUID = ConfigManager.getSelectedAccount().uuid
+    const selectedAccount = ConfigManager.getSelectedAccount()
+    const selectedUUID = selectedAccount ? selectedAccount.uuid : ''
 
     let microsoftAuthAccountStr = ''
 
@@ -1043,9 +1045,17 @@ async function showUserModDetails(projectId) {
                 installButton.textContent = 'Install latest'
             }
         }, 'settingsUserModInstall')
-        detailsContainer.append(title, description, versions, installButton)
+        const closeButton = userModsButton('Close', () => {
+            detailsContainer.hidden = true
+            detailsContainer.replaceChildren()
+        }, 'settingsUserModClose')
+        const actionsRow = document.createElement('div')
+        actionsRow.className = 'settingsUserModDetailsActions'
+        actionsRow.append(installButton, closeButton)
+        detailsContainer.append(title, description, versions, actionsRow)
     } catch(error) {
         detailsContainer.textContent = ''
+        detailsContainer.hidden = true
         setUserModsError(`Unable to load mod details: ${error.message}`)
     }
 }
@@ -1877,6 +1887,8 @@ if(storageDeleteButton) {
             document.getElementById('settingsStorageCandidates').replaceChildren()
         } catch(error) {
             document.getElementById('settingsStorageError').textContent = `Storage cleanup failed: ${error.message}`
+        } finally {
+            storageDeleteButton.disabled = !storageScanResult || storageScanResult.candidateCount === 0
         }
     })
 }

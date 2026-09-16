@@ -1902,9 +1902,42 @@ input:checked + .toggleSwitchSlider:before {
 #settingsUserModsDetails {
     background: rgba(10, 14, 38, 0.8);
     border: 1px solid rgba(139, 125, 255, 0.35);
-    border-radius: 4px;
+    border-radius: 6px;
     margin: 8px 0 13px;
-    padding: 10px;
+    padding: 12px;
+}
+
+.settingsUserModDetailsActions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.settingsUserModClose {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(240, 235, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.settingsUserModClose:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+}
+
+.settingsNoAccountsNotice {
+    padding: 16px;
+    text-align: center;
+    color: rgba(232, 227, 255, 0.6);
+    font-size: 13px;
+    border: 1px dashed rgba(139, 125, 255, 0.25);
+    border-radius: 8px;
+    margin-top: 8px;
 }
 
 .settingsUserModsInstalledHeader {
@@ -5829,11 +5862,12 @@ button, input, select { font-family: inherit; }
 #newsButton { display: flex; flex-direction: column; align-items: center; gap: 7px; color: var(--nebula-muted); background: transparent; font-size: 11px; letter-spacing: .12em; }
 #newsButton:hover { color: var(--nebula-cyan); }
 #newsButtonSVG { width: 16px; height: 10px; transition: transform .2s; }
-#newsButton:hover #newsButtonSVG { transform: translateY(2px); }
+#newsButton:hover #newsButtonSVG { transform: translateY(-3px); }
 #launch_content { flex-direction: column; gap: 8px; }
 #launch_button { width: calc(100% - 28px); padding: 12px 16px; border-radius: 12px; color: #071022; background: linear-gradient(135deg, var(--nebula-cyan), var(--nebula-violet)); font-size: 13px; font-weight: 850; box-shadow: 0 10px 30px rgba(105,217,255,.12); transition: transform .2s, box-shadow .2s; }
 #launch_button:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(154,140,255,.26); }
-#server_selection_button { max-width: calc(100% - 28px); overflow: hidden; color: var(--nebula-muted); background: transparent; border: 0; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+#server_selection_button { max-width: calc(100% - 28px); overflow: hidden; color: var(--nebula-muted); background: transparent; border: 0; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; transition: color .2s ease; }
+#server_selection_button:hover { color: #f0ebff; }
 #launch_details { display: none; height: 100%; align-items: center; padding: 0 20px; gap: 14px; }
 #launch_details_left { display: flex; align-items: center; gap: 12px; color: var(--nebula-cyan); font-size: 16px; }
 #launch_details_right { flex: 1; min-width: 0; }
@@ -6088,7 +6122,11 @@ body::before { animation: none !important; }
 
 /* Final landing geometry: these selectors intentionally match the legacy
    structural rules so the compact layout cannot be overridden by them. */
-#landingContainer {
+#landingContainer[style*="display: none"] {
+    display: none !important;
+}
+
+#landingContainer:not([style*="display: none"]) {
     display: grid !important;
     grid-template-rows: minmax(0, 1fr) auto !important;
     min-height: 0;
