@@ -630,11 +630,15 @@ function populateAuthAccounts(){
     authKeys.forEach((val) => {
         const acc = authAccounts[val]
         const displayName = escapeHtml(acc.displayName)
-        const uuid = escapeHtml(acc.uuid)
+        const rawUuid = typeof acc.uuid === 'string' ? acc.uuid.trim() : ''
+        const uuid = escapeHtml(rawUuid)
+        const imageUuid = /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i.test(rawUuid)
+            ? rawUuid.replace(/-/g, '')
+            : ''
 
         const accHtml = `<div class="settingsAuthAccount" uuid="${uuid}">
             <div class="settingsAuthAccountLeft">
-                <img class="settingsAuthAccountImage" alt="${displayName}" src="https://mc-heads.net/body/${uuid}/60" onerror="this.onerror=null;this.src='./assets/images/nebula-icon.png';">
+                <img class="settingsAuthAccountImage" alt="${displayName}" src="${imageUuid ? `https://mc-heads.net/body/${encodeURIComponent(imageUuid)}/60` : './assets/images/nebula-icon.png'}" onerror="this.onerror=null;this.src='./assets/images/nebula-icon.png';">
             </div>
             <div class="settingsAuthAccountRight">
                 <div class="settingsAuthAccountDetails">

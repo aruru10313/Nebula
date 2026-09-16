@@ -206,19 +206,20 @@ document.getElementById('avatarOverlay').onclick = async e => {
 // Bind selected account
 function updateSelectedAccount(authUser){
     let username = Lang.queryJS('landing.selectedAccount.noAccountSelected')
+    avatarImage.onerror = null
+    avatarImage.src = './assets/images/nebula-icon.png'
     if(authUser != null){
         if(authUser.displayName != null){
             username = authUser.displayName
         }
-        if(authUser.uuid != null){
-            avatarImage.src = `https://mc-heads.net/avatar/${encodeURIComponent(authUser.uuid)}/100.png`
+        const uuid = typeof authUser.uuid === 'string' ? authUser.uuid.trim() : ''
+        if(/^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i.test(uuid)){
+            avatarImage.src = `https://mc-heads.net/avatar/${encodeURIComponent(uuid.replace(/-/g, ''))}/100.png`
             avatarImage.onerror = () => {
                 avatarImage.onerror = null
                 avatarImage.src = './assets/images/nebula-icon.png'
             }
         }
-    } else {
-        avatarImage.src = './assets/images/nebula-icon.png'
     }
     user_text.innerHTML = username
 }
