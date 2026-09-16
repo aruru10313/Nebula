@@ -37,6 +37,7 @@ const launch_progress_label   = document.getElementById('launch_progress_label')
 const launch_details_text     = document.getElementById('launch_details_text')
 const server_selection_button = document.getElementById('server_selection_button')
 const user_text               = document.getElementById('user_text')
+const avatarImage             = document.getElementById('avatarImage')
 
 const loggerLanding = LoggerUtil.getLogger('Landing')
 
@@ -210,8 +211,14 @@ function updateSelectedAccount(authUser){
             username = authUser.displayName
         }
         if(authUser.uuid != null){
-            document.getElementById('avatarContainer').style.backgroundImage = `url('https://mc-heads.net/avatar/${authUser.uuid}/100')`
+            avatarImage.src = `https://crafatar.com/avatars/${encodeURIComponent(authUser.uuid)}?size=100&overlay`
+            avatarImage.onerror = () => {
+                avatarImage.onerror = null
+                avatarImage.src = './assets/images/nebula-icon.png'
+            }
         }
+    } else {
+        avatarImage.src = './assets/images/nebula-icon.png'
     }
     user_text.innerHTML = username
 }
