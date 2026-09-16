@@ -5888,6 +5888,83 @@ button, input, select { font-family: inherit; }
 
 /* Keep settings usable at the launcher's compact window size. */
 body::before { animation: none !important; }
+
+/* Keep landing controls inside the viewport at compact launcher sizes. */
+#landingContainer,
+#landingContainer *,
+#landingContainer *::before,
+#landingContainer *::after {
+    box-sizing: border-box;
+}
+
+#landingContainer > #upper {
+    min-width: 0;
+    overflow: hidden;
+}
+
+#landingContainer > #upper > #content {
+    min-width: 0;
+    padding-right: 96px;
+}
+
+#landingContainer > #upper > #right {
+    right: 12px;
+    width: 62px;
+    min-width: 62px;
+    max-width: 62px;
+    padding: 0;
+}
+
+#landingContainer > #upper > #right #rightContainer {
+    width: 62px;
+    min-width: 62px;
+    max-width: 62px;
+}
+
+#landingContainer > #lower {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) minmax(100px, 180px) minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px 14px 18px;
+}
+
+#landingContainer > #lower > #right,
+#landingContainer > #lower > #right .bot_wrapper {
+    min-width: 0;
+    max-width: 100%;
+}
+
+#landingContainer > #lower > #right #launch_content {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: 18px;
+}
+
+#landingContainer > #lower > #right #launch_button,
+#landingContainer > #lower > #right #server_selection_button {
+    max-width: 100%;
+}
+
+@media (max-width: 1050px) {
+    #landingContainer > #upper > #content {
+        padding-left: 42px;
+        padding-right: 82px;
+    }
+
+    #landingContainer > #lower {
+        grid-template-columns: minmax(0, 1fr) minmax(92px, 156px) minmax(0, 1fr);
+        gap: 8px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #landingContainer > #lower > #right #launch_content {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+}
 #settingsContainerRight,
 #settingsTabStorage,
 #settingsModsContainer,
