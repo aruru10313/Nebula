@@ -211,7 +211,7 @@ function updateSelectedAccount(authUser){
             username = authUser.displayName
         }
         if(authUser.uuid != null){
-            avatarImage.src = `https://crafatar.com/avatars/${encodeURIComponent(authUser.uuid)}?size=100&overlay`
+            avatarImage.src = `https://mc-heads.net/avatar/${encodeURIComponent(authUser.uuid)}/100.png`
             avatarImage.onerror = () => {
                 avatarImage.onerror = null
                 avatarImage.src = './assets/images/nebula-icon.png'
