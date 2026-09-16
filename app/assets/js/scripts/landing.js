@@ -643,6 +643,7 @@ const newsArticleComments           = document.getElementById('newsArticleCommen
 const newsNavigationStatus          = document.getElementById('newsNavigationStatus')
 const newsArticleContentScrollable  = document.getElementById('newsArticleContentScrollable')
 const newsScrollTop                 = document.getElementById('newsScrollTop')
+const newsBackButton               = document.getElementById('newsBackButton')
 const nELoadSpan                    = document.getElementById('nELoadSpan')
 
 newsScrollTop.onclick = () => {
@@ -721,6 +722,18 @@ document.getElementById('newsButton').onclick = () => {
     slide_(!newsActive)
     newsActive = !newsActive
 }
+
+newsBackButton.onclick = () => {
+    if(newsActive){
+        document.getElementById('newsButton').click()
+    }
+}
+
+document.addEventListener('keydown', (event) => {
+    if(event.key === 'Escape' && newsActive){
+        newsBackButton.click()
+    }
+})
 
 // Array to store article meta.
 let newsArr = null

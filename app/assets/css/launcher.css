@@ -12,6 +12,12 @@
     src: url('../fonts/Avenir-Book.ttf');
 }
 
+@media (max-width: 760px) {
+    #newsContainer { padding: 58px 12px 14px; }
+    #newsBackButton { top: 14px; left: 14px; }
+    #newsContent { width: 100%; height: 100%; max-height: none; margin: 0; }
+}
+
 @font-face {
     font-family: 'Avenir Medium';
     src: url('../fonts/Avenir-Medium.ttf');
@@ -5526,7 +5532,7 @@ body.window-maximized #frameBar {
 #newsContent {
     box-sizing: border-box;
     width: min(100%, 940px);
-    height: auto;
+    height: min(100%, 520px);
     min-height: min(240px, calc(100% - 48px));
     max-height: min(82%, 430px);
     gap: 18px;
@@ -5770,7 +5776,8 @@ button, input, select { font-family: inherit; }
 
 #landingContainer { position: relative; overflow: hidden; background: radial-gradient(circle at 80% 12%, rgba(105,217,255,.12), transparent 28rem), radial-gradient(circle at 8% 50%, rgba(154,140,255,.13), transparent 32rem), var(--nebula-bg); }
 #landingContainer::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .3; background-image: radial-gradient(#fff 1px, transparent 1px), radial-gradient(#69d9ff 1px, transparent 1px); background-size: 180px 180px, 270px 270px; background-position: 20px 35px, 95px 135px; }
-#upper { position: relative; min-height: calc(100% - 132px); display: grid; grid-template-columns: minmax(0, 1fr) 150px; background: linear-gradient(90deg, rgba(4,6,17,.97), rgba(4,6,17,.62) 58%, rgba(4,6,17,.25)), url('../images/backgrounds/0.jpg') center/cover; }
+#landingContainer { display: grid; grid-template-rows: minmax(0, 1fr) auto; }
+#upper { position: relative; min-height: 0; height: auto; display: grid; grid-template-columns: minmax(0, 1fr) 150px; background: linear-gradient(90deg, rgba(4,6,17,.97), rgba(4,6,17,.62) 58%, rgba(4,6,17,.25)), url('../images/backgrounds/0.jpg') center/cover; }
 #upper::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 58%, var(--nebula-bg) 100%); }
 #upper > #content { position: relative; z-index: 1; display: flex; align-items: center; padding: 48px clamp(28px, 7vw, 90px); }
 #landingHero { max-width: 700px; }
@@ -5794,7 +5801,7 @@ button, input, select { font-family: inherit; }
 .mediaContainer:hover .mediaSVG { fill: var(--nebula-cyan); filter: drop-shadow(0 0 7px rgba(105,217,255,.6)); }
 .mediaDivider { width: 36px; height: 1px; margin: 8px auto; background: var(--nebula-line); }
 #chzzkLabel { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 6px; color: var(--nebula-violet); border: 1px solid var(--nebula-line-hot); font-size: 11px; font-weight: 800; }
-#lower { position: relative; z-index: 3; display: grid; grid-template-columns: 1fr minmax(170px, 260px) 1fr; gap: 18px; height: 132px; padding: 18px 32px 24px; background: linear-gradient(180deg, transparent, var(--nebula-bg) 24%); }
+#lower { position: relative; z-index: 3; display: grid; grid-template-columns: 1fr minmax(170px, 260px) 1fr; gap: 18px; height: auto; min-height: 112px; padding: 18px 32px 24px; background: linear-gradient(180deg, transparent, var(--nebula-bg) 24%); }
 #lower > * { min-width: 0; }
 .bot_wrapper { height: 100%; border: 1px solid var(--nebula-line); border-radius: 18px; background: rgba(15,19,47,.72); box-shadow: inset 0 1px rgba(255,255,255,.04); backdrop-filter: blur(14px); }
 #lower #content, #launch_content { height: 100%; display: flex; align-items: center; justify-content: center; }
@@ -5813,7 +5820,9 @@ button, input, select { font-family: inherit; }
 #launch_progress { width: 100%; height: 6px; accent-color: var(--nebula-cyan); }
 #launch_details_text { display: block; margin-top: 8px; overflow: hidden; color: var(--nebula-muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
 #newsContainer { position: absolute; z-index: 10; top: 100%; left: 0; right: auto; bottom: auto; width: 100%; height: 100%; padding: 34px; background: rgba(4,6,17,.96); backdrop-filter: blur(20px); }
-#newsContent { height: 100%; max-width: 1080px; margin: auto; display: flex; flex-direction: column; border: 1px solid var(--nebula-line); border-radius: 22px; overflow: hidden; background: var(--nebula-panel); box-shadow: 0 24px 80px rgba(0,0,0,.35); }
+#newsBackButton { position: absolute; top: 18px; left: 24px; z-index: 2; display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border: 1px solid var(--nebula-line-hot); border-radius: 999px; color: var(--nebula-text); background: rgba(15,19,47,.92); cursor: pointer; font-size: 12px; }
+#newsBackButton:hover, #newsBackButton:focus { color: var(--nebula-cyan); border-color: var(--nebula-cyan); outline: none; }
+#newsContent { height: calc(100% - 36px); max-width: 1080px; margin: 36px auto 0; display: flex; flex-direction: column; border: 1px solid var(--nebula-line); border-radius: 22px; overflow: hidden; background: var(--nebula-panel); box-shadow: 0 24px 80px rgba(0,0,0,.35); }
 #newsStatusContainer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px 28px; border-bottom: 1px solid var(--nebula-line); }
 #newsArticleTitle { color: var(--nebula-text); font-size: 23px; font-weight: 800; text-decoration: none; }
 #newsArticleTitle:hover { color: var(--nebula-cyan); }
@@ -5838,6 +5847,10 @@ button, input, select { font-family: inherit; }
 .settingsNavItem:hover, .settingsNavItem:focus { color: var(--nebula-text); background: rgba(105,217,255,.08); }
 .settingsNavItem[selected] { color: var(--nebula-cyan); background: linear-gradient(90deg, rgba(105,217,255,.14), rgba(154,140,255,.08)); box-shadow: inset 3px 0 var(--nebula-cyan); }
 #settingsNavDone { margin: 12px; border: 1px solid var(--nebula-line-hot); border-radius: 11px; color: var(--nebula-text); background: rgba(105,217,255,.08); }
+#settingsNavItemsContent { height: 100%; min-height: 0; }
+.settingsNavSpacer { flex: 1 1 auto; height: auto; min-height: 18px; }
+#settingsNavContentBottom { position: static; margin-top: auto; padding-top: 12px; }
+#settingsNavContentBottom .settingsNavDivider { width: auto; margin: 0 12px 14px; }
 #settingsContainerRight { background: transparent; }
 .settingsTab { padding: 34px 38px; }
 .settingsTabHeader { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--nebula-line); }
