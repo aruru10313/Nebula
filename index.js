@@ -3,6 +3,12 @@ remoteMain.initialize()
 
 // Requirements
 const { app, BrowserWindow, dialog, ipcMain, Menu, shell } = require('electron')
+
+// Keep Chromium GPU compositing enabled. Wayland + Vulkan is unstable on some Linux drivers,
+// so use the accelerated OpenGL path there instead of disabling GPU acceleration globally.
+if(process.platform === 'linux') {
+    app.commandLine.appendSwitch('disable-vulkan')
+}
 const ejse                              = require('ejs-electron')
 const { autoUpdater }                   = require('electron-updater')
 const fs                                = require('fs')
@@ -97,9 +103,6 @@ ipcMain.handle(USER_OPTION_MODS_OPCODE.UPDATE_ALL, () => ModrinthAPI.updateAll(g
 ipcMain.handle(DISTRIBUTION_CLEANUP_OPCODE.SCAN, () => DistributionCleanup.scanUnreferencedFiles())
 ipcMain.handle(DISTRIBUTION_CLEANUP_OPCODE.DELETE, (_event, scanResult, confirmation) => DistributionCleanup.deleteUnreferencedFiles(scanResult, confirmation))
 
-// Disable hardware acceleration.
-// https://electronjs.org/docs/tutorial/offscreen-rendering
-app.disableHardwareAcceleration()
 
 
 const REDIRECT_URI_PREFIX = 'https://login.microsoftonline.com/common/oauth2/nativeclient?'
