@@ -5965,6 +5965,66 @@ body::before { animation: none !important; }
         padding-right: 8px;
     }
 }
+
+/* Final landing geometry: these selectors intentionally match the legacy
+   structural rules so the compact layout cannot be overridden by them. */
+#landingContainer {
+    display: grid !important;
+    grid-template-rows: minmax(0, 1fr) auto !important;
+    min-height: 0;
+}
+
+#landingContainer > #upper {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: hidden;
+}
+
+#landingContainer > #upper > #content {
+    height: 100%;
+    align-items: center;
+    padding: 0 96px 0 42px;
+}
+
+#landingContainer > #upper > #content #landingHero {
+    width: min(100%, 760px);
+}
+
+#landingContainer > #upper > #right {
+    top: 24px;
+    right: 12px;
+    height: calc(100% - 48px);
+}
+
+#landingContainer > #lower {
+    height: auto !important;
+    min-height: 112px;
+    align-items: center;
+    padding: 12px 14px 18px;
+}
+
+#landingContainer > #lower > #center,
+#landingContainer > #lower > #right {
+    height: auto;
+    align-self: center;
+}
+
+@media (max-width: 760px) {
+    #landingContainer > #upper > #content {
+        padding: 0 82px 0 24px;
+    }
+
+    #landingContainer > #upper > #right {
+        top: 14px;
+        right: 8px;
+        height: calc(100% - 28px);
+    }
+
+    #landingContainer > #lower {
+        min-height: 96px;
+        padding: 8px 8px 12px;
+    }
+}
 #settingsContainerRight,
 #settingsTabStorage,
 #settingsModsContainer,
