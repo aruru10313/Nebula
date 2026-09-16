@@ -1825,7 +1825,12 @@ if(storageScanButton) {
     storageScanButton.addEventListener('click', async () => {
         storageScanButton.disabled = true
         try {
-            renderStorageScan(await ipcRenderer.invoke(DISTRIBUTION_CLEANUP_OPCODE.SCAN))
+            renderStorageScan(await ipcRenderer.invoke(DISTRIBUTION_CLEANUP_OPCODE.SCAN, {
+                launcherDirectory: ConfigManager.getLauncherDirectory(),
+                commonDirectory: ConfigManager.getCommonDirectory(),
+                instanceDirectory: ConfigManager.getInstanceDirectory(),
+                serverId: ConfigManager.getSelectedServer()
+            }))
         } catch(error) {
             document.getElementById('settingsStorageError').textContent = `Storage scan failed: ${error.message}`
         } finally {

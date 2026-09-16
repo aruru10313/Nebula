@@ -2,7 +2,7 @@ const remoteMain = require('@electron/remote/main')
 remoteMain.initialize()
 
 // Requirements
-const { app, BrowserWindow, dialog, ipcMain, Menu, shell } = require('electron')
+const { app, BrowserWindow, dialog, ipcMain, Menu, screen, shell } = require('electron')
 
 // Keep Chromium GPU compositing enabled. Wayland + Vulkan is unstable on some Linux drivers,
 // so use the accelerated OpenGL path there instead of disabling GPU acceleration globally.
@@ -100,7 +100,7 @@ ipcMain.handle(USER_OPTION_MODS_OPCODE.DELETE, (_event, projectId) => ModrinthAP
 ipcMain.handle(USER_OPTION_MODS_OPCODE.CHECK_UPDATES, () => ModrinthAPI.checkUpdates(getUserModsDirectory()))
 ipcMain.handle(USER_OPTION_MODS_OPCODE.UPDATE, (_event, projectId) => ModrinthAPI.update(getUserModsDirectory(), projectId))
 ipcMain.handle(USER_OPTION_MODS_OPCODE.UPDATE_ALL, () => ModrinthAPI.updateAll(getUserModsDirectory()))
-ipcMain.handle(DISTRIBUTION_CLEANUP_OPCODE.SCAN, () => DistributionCleanup.scanUnreferencedFiles())
+ipcMain.handle(DISTRIBUTION_CLEANUP_OPCODE.SCAN, (_event, options) => DistributionCleanup.scanUnreferencedFiles(options))
 ipcMain.handle(DISTRIBUTION_CLEANUP_OPCODE.DELETE, (_event, scanResult, confirmation) => DistributionCleanup.deleteUnreferencedFiles(scanResult, confirmation))
 
 
@@ -446,13 +446,15 @@ function setupLauncherUpdater() {
 }
 
 function createWindow() {
-
     pageFinishedLoading = false
     let launcherWindowShown = false
+    const workArea = screen.getPrimaryDisplay().workAreaSize
+    const launcherWidth = Math.min(LAUNCHER_DEFAULT_WIDTH, Math.max(LAUNCHER_MIN_WIDTH, workArea.width - 24))
+    const launcherHeight = Math.min(LAUNCHER_DEFAULT_HEIGHT, Math.max(LAUNCHER_MIN_HEIGHT, workArea.height - 24))
 
     win = new BrowserWindow({
-        width: LAUNCHER_DEFAULT_WIDTH,
-        height: LAUNCHER_DEFAULT_HEIGHT,
+        width: launcherWidth,
+        height: launcherHeight,
         minWidth: LAUNCHER_MIN_WIDTH,
         minHeight: LAUNCHER_MIN_HEIGHT,
         show: false,
@@ -477,7 +479,7 @@ function createWindow() {
 
         const bounds = win.getBounds()
         if(bounds.width < LAUNCHER_MIN_WIDTH || bounds.height < LAUNCHER_MIN_HEIGHT) {
-            win.setSize(LAUNCHER_DEFAULT_WIDTH, LAUNCHER_DEFAULT_HEIGHT)
+            win.setSize(launcherWidth, launcherHeight)
             win.center()
         }
         if(win.isMinimized()) {

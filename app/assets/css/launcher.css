@@ -5816,7 +5816,7 @@ button, input, select { font-family: inherit; }
 #launch_button { width: calc(100% - 28px); padding: 12px 16px; border-radius: 12px; color: #071022; background: linear-gradient(135deg, var(--nebula-cyan), var(--nebula-violet)); font-size: 13px; font-weight: 850; box-shadow: 0 10px 30px rgba(105,217,255,.12); transition: transform .2s, box-shadow .2s; }
 #launch_button:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(154,140,255,.26); }
 #server_selection_button { max-width: calc(100% - 28px); overflow: hidden; color: var(--nebula-muted); background: transparent; border: 0; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
-#launch_details { height: 100%; display: flex; align-items: center; padding: 0 20px; gap: 14px; }
+#launch_details { display: none; height: 100%; align-items: center; padding: 0 20px; gap: 14px; }
 #launch_details_left { display: flex; align-items: center; gap: 12px; color: var(--nebula-cyan); font-size: 16px; }
 #launch_details_right { flex: 1; min-width: 0; }
 #launch_progress { width: 100%; height: 6px; accent-color: var(--nebula-cyan); }
@@ -5877,4 +5877,52 @@ button, input, select { font-family: inherit; }
 #newsArticleContentScrollable::-webkit-scrollbar-thumb { background: rgba(105,217,255,.42); box-shadow: none; }
 @media (prefers-reduced-motion: reduce) {
     #newsContainer, #landingContainer > #upper, #landingContainer > #lower > #left, #landingContainer > #lower > #center, #landingContainer > #lower > #right { transition-duration: .01ms !important; }
+}
+
+/* Keep settings usable at the launcher's compact window size. */
+body::before { animation: none !important; }
+#settingsContainerRight,
+#settingsTabStorage,
+#settingsModsContainer,
+#settingsModsContainer > div,
+#settingsUserModsResults,
+#settingsUserModsInstalled,
+.settingsUserModCard,
+.settingsStoragePanel {
+    min-width: 0;
+    max-width: 100%;
+}
+#settingsContainerRight,
+.settingsTab {
+    overflow-x: hidden;
+}
+#settingsModsContainer {
+    width: 100%;
+}
+#settingsUserModsControls {
+    flex-wrap: wrap;
+}
+#settingsUserModsControls input {
+    flex: 1 1 220px;
+}
+#settingsUserModsControls select {
+    flex: 1 1 130px;
+    max-width: none;
+}
+.settingsUserModCard {
+    overflow: hidden;
+}
+.settingsUserModDescription {
+    white-space: normal;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+#settingsContainerRight,
+#settingsAuthAccountTypeContainer,
+#settingsModsContainer > div,
+.settingsStoragePanel,
+.settingsUserModCard {
+    backdrop-filter: none;
 }
