@@ -22,7 +22,8 @@ function useReleaseFallback() {
         link.href = releasePage
     })
     if (releaseVersion) {
-        releaseVersion.textContent = 'GitHub Releases'
+        releaseVersion.textContent = '릴리스 페이지에서 확인'
+        releaseVersion.classList.add('is-fallback')
     }
 }
 
@@ -47,6 +48,7 @@ fetch(releaseRepository, {
         })
         if (releaseVersion) {
             releaseVersion.textContent = version
+            releaseVersion.classList.remove('is-fallback')
         }
     })
     .catch(() => {
@@ -62,14 +64,15 @@ if (announcementList) {
         })
         .then(data => {
             announcementList.replaceChildren()
-            if (!data.announcements.length) {
+            const announcements = Array.isArray(data.announcements) ? data.announcements : []
+            if (!announcements.length) {
                 const empty = document.createElement('p')
                 empty.className = 'muted'
                 empty.textContent = '등록된 공지가 없습니다.'
                 announcementList.append(empty)
                 return
             }
-            data.announcements.forEach(item => {
+            announcements.forEach(item => {
                 const article = document.createElement('article')
                 article.className = 'announcement-card'
                 if (item.imageUrl) {

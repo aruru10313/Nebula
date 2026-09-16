@@ -1712,8 +1712,8 @@ function populateSettingsUpdateInformation(data){
     } else if(data?.nebula){
         settingsUpdateTitle.innerHTML = isPrerelease(data.version) ? Lang.queryJS('settings.updates.newPreReleaseTitle') : Lang.queryJS('settings.updates.newReleaseTitle')
         settingsUpdateChangelogCont.style.display = null
-        settingsUpdateChangelogTitle.innerHTML = data.releaseName
-        settingsUpdateChangelogText.innerHTML = data.releaseNotes
+        settingsUpdateChangelogTitle.textContent = data.releaseName || Lang.queryJS('settings.updates.newReleaseTitle')
+        settingsUpdateChangelogText.textContent = data.releaseNotes || ''
         populateVersionInformation(data.version, settingsUpdateVersionValue, settingsUpdateVersionTitle, settingsUpdateVersionCheck)
         settingsUpdateButtonStatus(Lang.queryJS('settings.updates.downloadModUpdatesButton'), false, () => {
             settingsUpdateButtonStatus(Lang.queryJS('settings.updates.downloadingButton'), true)

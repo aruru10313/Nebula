@@ -238,20 +238,24 @@ server_selection_button.onclick = async e => {
 
 const refreshServerStatus = async (fade = false) => {
     loggerLanding.info('Refreshing Server Status')
-    const serv = (await DistroAPI.getDistribution()).getServerById(ConfigManager.getSelectedServer())
-
     let pLabel = Lang.queryJS('landing.serverStatus.server')
     let pVal = Lang.queryJS('landing.serverStatus.offline')
 
     try {
-
+        const distribution = await Promise.race([
+            DistroAPI.getDistribution(),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Distribution request timed out.')), 10000))
+        ])
+        const serv = distribution.getServerById(ConfigManager.getSelectedServer())
+        if(serv == null) {
+            throw new Error('No selected server is available.')
+        }
         const servStat = await getServerStatus(47, serv.hostname, serv.port)
-        console.log(servStat)
         pLabel = Lang.queryJS('landing.serverStatus.players')
         pVal = servStat.players.online + '/' + servStat.players.max
 
     } catch (err) {
-        loggerLanding.warn('Unable to refresh server status, assuming offline.')
+        loggerLanding.warn('Unable to refresh server status, showing offline.')
         loggerLanding.debug(err)
     }
     if(fade){
