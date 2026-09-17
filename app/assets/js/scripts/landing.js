@@ -204,8 +204,12 @@ document.getElementById('settingsMediaButton').onclick = async e => {
 
 // Bind mods quick-access button (opens dedicated Mod Manager view)
 document.getElementById('modsMediaButton').onclick = async e => {
-    if(typeof prepareMods === 'function') {
-        await prepareMods()
+    try {
+        if(typeof prepareMods === 'function') {
+            await prepareMods()
+        }
+    } catch(err) {
+        console.warn('Error preparing mods:', err)
     }
     switchView(getCurrentView(), VIEWS.mods)
 }

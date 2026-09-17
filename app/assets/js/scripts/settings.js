@@ -367,8 +367,12 @@ const settingsOpenModsBtn = document.getElementById('settingsOpenModsBtn')
 if(settingsOpenModsBtn) {
     settingsOpenModsBtn.onclick = async () => {
         fullSettingsSave()
-        if(typeof prepareMods === 'function') {
-            await prepareMods()
+        try {
+            if(typeof prepareMods === 'function') {
+                await prepareMods()
+            }
+        } catch(err) {
+            console.warn('Error preparing mods:', err)
         }
         switchView(getCurrentView(), VIEWS.mods)
     }

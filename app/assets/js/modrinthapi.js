@@ -41,9 +41,9 @@ async function search({ query = '', category = 'all', sort = 'relevance' } = {})
     const facets = [
         ['project_type:mod'],
         [`versions:${UserOptionMods.GAME_VERSION}`],
-        ['client_side:required'],
-        ['server_side:optional'],
-        [`loaders:${UserOptionMods.LOADER}`]
+        [`loaders:${UserOptionMods.LOADER}`],
+        ['client_side!=unsupported'],
+        ['server_side!=required']
     ]
     if(normalizedCategory != null) {
         facets.push([`categories:${normalizedCategory}`])
@@ -69,7 +69,8 @@ async function search({ query = '', category = 'all', sort = 'relevance' } = {})
             downloads: project.downloads,
             follows: project.follows,
             categories: project.categories,
-            dateModified: project.date_modified
+            dateModified: project.date_modified,
+            author: project.author
         })),
         totalHits: response.body.total_hits
     }
@@ -122,12 +123,12 @@ function safeFileName(fileName) {
 
 async function install(launcherDirectory, { projectId, versionId } = {}) {
     UserOptionMods.validateProjectId(projectId)
-    if(typeof versionId !== 'string' || !/^[a-zA-Z0-9_-]+$/.test(versionId)) {
+    if(versionId != null && (typeof versionId !== 'string' || !/^[a-zA-Z0-9_-]+$/.test(versionId))) {
         throw new Error('Invalid Modrinth version ID.')
     }
 
     const versions = await getCompatibleVersions(projectId)
-    const version = versions.find(candidate => candidate.id === versionId) || versions[0]
+    const version = (versionId ? versions.find(candidate => candidate.id === versionId) : null) || versions[0]
     if(version == null || !Array.isArray(version.files) || version.files.length === 0) {
         throw new Error(`No Forge ${UserOptionMods.GAME_VERSION} version is available for this Modrinth project.`)
     }
