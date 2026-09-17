@@ -636,9 +636,14 @@ async function prepareMods(forceRefresh = false) {
 window.prepareMods = prepareMods
 window.saveAllModsConfig = saveAllModsConfig
 
-// Bindings on document ready
-document.addEventListener('DOMContentLoaded', () => {
+function initModsBindings() {
     initModsTabs()
     initModsHeaderActions()
     bindUserModsBrowser()
-})
+}
+
+if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initModsBindings)
+} else {
+    initModsBindings()
+}
