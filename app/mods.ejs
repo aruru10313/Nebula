@@ -1,0 +1,165 @@
+<div id="modsContainer" style="display: none;">
+    <div id="modsHeader">
+        <div id="modsHeaderLeft">
+            <div id="modsHeaderIcon">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                    <path d="M12 2 3 6.5v11L12 22l9-4.5v-11L12 2zm0 2.24 6.11 3.06L12 10.36 5.89 7.3 12 4.24zM5 8.87l6 3v7.06l-6-3V8.87zm8 10.06v-7.06l6-3v7.06l-6 3z"/>
+                </svg>
+            </div>
+            <div id="modsHeaderTextGroup">
+                <div id="modsHeaderTitle">네뷸라 모드 관리자</div>
+                <div id="modsHeaderSubtitle">Minecraft 1.20.1 Forge 최적화, 편의성 모드 및 셰이더팩 관리</div>
+            </div>
+        </div>
+        <div id="modsHeaderRight">
+            <button id="modsOpenFolderButton" class="nebula-btn-glass" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                <span>모드 폴더 열기</span>
+            </button>
+            <button id="modsRefreshButton" class="nebula-btn-glass" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                <span>새로고침</span>
+            </button>
+            <button id="modsCloseButton" class="nebula-btn-primary" type="button">
+                <span>닫기</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Navigation Pills -->
+    <div id="modsNav">
+        <button class="modsNavItem selected" id="modsNavUser" data-target="modsTabUser">
+            <span>✨ Modrinth 모드 스토어</span>
+        </button>
+        <button class="modsNavItem" id="modsNavServer" data-target="modsTabServer">
+            <span>🛡️ 서버 공식 모드</span>
+        </button>
+        <button class="modsNavItem" id="modsNavDropin" data-target="modsTabDropin">
+            <span>📁 직접 추가 모드 (.jar)</span>
+        </button>
+        <button class="modsNavItem" id="modsNavShaders" data-target="modsTabShaders">
+            <span>🎨 셰이더팩 & 리소스</span>
+        </button>
+    </div>
+
+    <!-- Tab 1: Modrinth User Option Mods -->
+    <div id="modsTabUser" class="modsTabContent">
+        <div class="modsContentHeader">
+            <div class="modsContentTitle">Modrinth 모드 스토어 & 개인 모드</div>
+            <div class="modsContentDesc">마인크래프트 1.20.1 Forge에 호환되는 모드를 검색하고 원클릭으로 설치하거나 업데이트할 수 있습니다.</div>
+        </div>
+
+        <div id="modsUserControls">
+            <div id="modsUserSearchWrapper">
+                <input id="settingsUserModsSearch" type="search" placeholder="Modrinth 모드 검색 (예: Sodium, Iris, JEI, Appleskin...)" autocomplete="off">
+            </div>
+            <div id="modsUserFilterWrapper">
+                <select id="settingsUserModsCategory" aria-label="Mod category">
+                    <option value="all">전체 카테고리</option>
+                    <option value="adventure">모험 (Adventure)</option>
+                    <option value="cursed">기타 (Cursed)</option>
+                    <option value="decoration">건축/장식 (Decoration)</option>
+                    <option value="economy">경제 (Economy)</option>
+                    <option value="equipment">장비 (Equipment)</option>
+                    <option value="food">음식 (Food)</option>
+                    <option value="library">라이브러리 (Library)</option>
+                    <option value="magic">마법 (Magic)</option>
+                    <option value="optimization">최적화 (Optimization)</option>
+                    <option value="storage">창고/인벤토리 (Storage)</option>
+                    <option value="technology">기술/기계 (Technology)</option>
+                    <option value="utility">편의기능 (Utility)</option>
+                </select>
+                <select id="settingsUserModsSort" aria-label="Sort mods">
+                    <option value="relevance">관련도순</option>
+                    <option value="downloads">인기순 (다운로드)</option>
+                    <option value="follows">팔로우순</option>
+                    <option value="newest">최신 등록순</option>
+                    <option value="updated">최근 업데이트순</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="settingsUserModsError" role="alert"></div>
+
+        <!-- Modrinth Search Results -->
+        <div class="modsSubSectionHeader">
+            <span>검색 결과</span>
+        </div>
+        <div id="settingsUserModsResults"></div>
+        <div id="settingsUserModsDetails" hidden></div>
+
+        <!-- Installed User Mods -->
+        <div class="modsSubSectionHeader" style="margin-top: 24px;">
+            <span>설치된 개인 모드 목록</span>
+            <div class="modsBatchActions">
+                <button id="settingsUserModsCheckUpdates" class="nebula-btn-glass" type="button">업데이트 확인</button>
+                <button id="settingsUserModsUpdateAll" class="nebula-btn-glass" type="button">전체 일괄 업데이트</button>
+            </div>
+        </div>
+        <div id="settingsUserModsInstalled"></div>
+    </div>
+
+    <!-- Tab 2: Server Official Mods -->
+    <div id="modsTabServer" class="modsTabContent" style="display: none;">
+        <div class="modsContentHeader">
+            <div class="modsContentTitle">서버 공식 모드 패키지</div>
+            <div class="modsContentDesc">네뷸라 마인크래프트 서버 접속 및 게임 플레이에 필수적이거나 권장되는 모드 목록입니다.</div>
+        </div>
+
+        <div class="modsServerSection">
+            <div class="modsSubSectionHeader">
+                <span>🔒 서버 필수 모드 (Required)</span>
+                <span class="modsSubSectionBadge">서버 접속 시 자동 동기화</span>
+            </div>
+            <div id="settingsReqModsContent" class="modsGridList"></div>
+        </div>
+
+        <div class="modsServerSection" style="margin-top: 24px;">
+            <div class="modsSubSectionHeader">
+                <span>⚙️ 서버 선택 모드 (Optional)</span>
+                <span class="modsSubSectionBadge">플레이어가 자유롭게 켜고 끌 수 있습니다</span>
+            </div>
+            <div id="settingsOptModsContent" class="modsGridList"></div>
+        </div>
+    </div>
+
+    <!-- Tab 3: Custom Drop-in Mods (.jar) -->
+    <div id="modsTabDropin" class="modsTabContent" style="display: none;">
+        <div class="modsContentHeader">
+            <div class="modsContentTitle">외부 직접 추가 모드 (.jar)</div>
+            <div class="modsContentDesc">사용자가 mods 폴더에 직접 넣은 Forge 모드 파일들입니다. 런처에서 개별적으로 비활성화하거나 삭제할 수 있습니다.</div>
+        </div>
+
+        <div id="modsDropinActions">
+            <button id="settingsDropinFileSystemButton" class="nebula-btn-glass" type="button">
+                <span>📁 모드 폴더 열기 (외부 .jar 파일 넣기)</span>
+                <span id="settingsDropinRefreshNote"><%- lang('settings.dropinRefreshNote') %></span>
+            </button>
+        </div>
+
+        <div id="settingsDropinModsContent" class="modsGridList"></div>
+    </div>
+
+    <!-- Tab 4: Shaders -->
+    <div id="modsTabShaders" class="modsTabContent" style="display: none;">
+        <div class="modsContentHeader">
+            <div class="modsContentTitle">셰이더팩 (Shaderpacks)</div>
+            <div class="modsContentDesc"><%- lang('settings.shaderpackDesc') %></div>
+        </div>
+
+        <div id="settingsShadersContainer" class="modsShaderCard">
+            <div class="modsShaderRow">
+                <span class="modsShaderLabel">현재 활성화된 셰이더팩</span>
+                <div id="settingsShaderpackWrapper">
+                    <button id="settingsShaderpackButton" class="nebula-btn-glass" type="button" title="셰이더 폴더 열기 / 셰이더 추가"> + 셰이더 추가 </button>
+                    <div class="settingsSelectContainer">
+                        <div class="settingsSelectSelected" id="settingsShadersSelected"><%- lang('settings.selectShaderpack') %></div>
+                        <div class="settingsSelectOptions" id="settingsShadersOptions" hidden></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./assets/js/scripts/mods.js"></script>
+</div>

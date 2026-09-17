@@ -345,16 +345,33 @@ function settingsSaveDisabled(v){
 
 function fullSettingsSave() {
     saveSettingsValues()
-    saveModConfiguration()
+    if(typeof saveModConfiguration === 'function') {
+        saveModConfiguration()
+    }
     ConfigManager.save()
-    saveDropinModConfiguration()
-    saveShaderpackSettings()
+    if(typeof saveDropinModConfiguration === 'function') {
+        saveDropinModConfiguration()
+    }
+    if(typeof saveShaderpackSettings === 'function') {
+        saveShaderpackSettings()
+    }
 }
 
 /* Closes the settings view and saves all data. */
 settingsNavDone.onclick = () => {
     fullSettingsSave()
     switchView(getCurrentView(), VIEWS.landing)
+}
+
+const settingsOpenModsBtn = document.getElementById('settingsOpenModsBtn')
+if(settingsOpenModsBtn) {
+    settingsOpenModsBtn.onclick = async () => {
+        fullSettingsSave()
+        if(typeof prepareMods === 'function') {
+            await prepareMods()
+        }
+        switchView(getCurrentView(), VIEWS.mods)
+    }
 }
 
 /**
@@ -1907,8 +1924,6 @@ async function prepareSettings(first = false) {
         setupSettingsTabs()
         initSettingsValidators()
         prepareUpdateTab()
-    } else {
-        await prepareModsTab()
     }
     await initSettingsValues()
     prepareAccountsTab()

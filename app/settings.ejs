@@ -8,11 +8,14 @@
                 <div id="settingsNavItemsContent">
                     <button class="settingsNavItem" rSc="settingsTabAccount" id="settingsNavAccount" selected><%- lang('settings.navAccount') %></button>
                     <button class="settingsNavItem" rSc="settingsTabMinecraft"><%- lang('settings.navMinecraft') %></button>
-                    <button class="settingsNavItem" rSc="settingsTabMods" id="settingsNavMods"><%- lang('settings.navMods') %></button>
                     <button class="settingsNavItem" rSc="settingsTabJava"><%- lang('settings.navJava') %></button>
                     <button class="settingsNavItem" rSc="settingsTabLauncher"><%- lang('settings.navLauncher') %></button>
-                    <button class="settingsNavItem" rSc="settingsTabStorage">Storage</button>
+                    <button class="settingsNavItem" rSc="settingsTabStorage">저장공간 관리</button>
                     <div class="settingsNavSpacer"></div>
+                    <button id="settingsOpenModsBtn" class="settingsNavModLink" type="button">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2 3 6.5v11L12 22l9-4.5v-11L12 2zm0 2.24 6.11 3.06L12 10.36 5.89 7.3 12 4.24zM5 8.87l6 3v7.06l-6-3V8.87zm8 10.06v-7.06l6-3v7.06l-6 3z"/></svg>
+                        <span>모드 관리자 열기</span>
+                    </button>
                     <button class="settingsNavItem" rSc="settingsTabAbout"><%- lang('settings.navAbout') %></button>
                     <button class="settingsNavItem" rSc="settingsTabUpdate" id="settingsNavUpdate"><%- lang('settings.navUpdates') %></button>
                     <div id="settingsNavContentBottom">
@@ -96,90 +99,6 @@
                         <input type="checkbox" cValue="LaunchDetached">
                         <span class="toggleSwitchSlider"></span>
                     </label>
-                </div>
-            </div>
-        </div>
-        <div id="settingsTabMods" class="settingsTab" style="display: none;">
-            <div class="settingsTabHeader">
-                <span class="settingsTabHeaderText"><%- lang('settings.tabModsHeaderText') %></span>
-                <span class="settingsTabHeaderDesc"><%- lang('settings.tabModsHeaderDesc') %></span>
-            </div>
-            <div class="settingsSelServContainer">
-                <div class="settingsSelServContent">
-
-                </div>
-                <div class="settingsSwitchServerContainer">
-                    <div class="settingsSwitchServerContent">
-                        <button class="settingsSwitchServerButton"><%- lang('settings.switchServerButton') %></button>
-                    </div>
-                </div>
-            </div>
-            <div id="settingsModsContainer">
-                <div id="settingsReqModsContainer">
-                    <div class="settingsModsHeader"><%- lang('settings.requiredMods') %></div>
-                    <div id="settingsReqModsContent">
-
-                    </div>
-                </div>
-                <div id="settingsOptModsContainer">
-                    <div class="settingsModsHeader"><%- lang('settings.optionalMods') %></div>
-                    <div id="settingsOptModsContent">
-                        
-                    </div>
-                </div>
-                <div id="settingsUserModsContainer">
-                    <div class="settingsModsHeader">Personal option mods</div>
-                    <div id="settingsUserModsNotice">Browse public Modrinth mods for Minecraft 1.20.1 Forge. These mods are stored separately from Nebula's required server files.</div>
-                    <div id="settingsUserModsControls">
-                        <input id="settingsUserModsSearch" type="search" placeholder="Search Modrinth">
-                        <select id="settingsUserModsCategory" aria-label="Mod category">
-                            <option value="all">All categories</option>
-                            <option value="adventure">Adventure</option>
-                            <option value="cursed">Cursed</option>
-                            <option value="decoration">Decoration</option>
-                            <option value="economy">Economy</option>
-                            <option value="equipment">Equipment</option>
-                            <option value="food">Food</option>
-                            <option value="library">Library</option>
-                            <option value="magic">Magic</option>
-                            <option value="optimization">Optimization</option>
-                            <option value="storage">Storage</option>
-                            <option value="technology">Technology</option>
-                            <option value="utility">Utility</option>
-                        </select>
-                        <select id="settingsUserModsSort" aria-label="Sort mods">
-                            <option value="relevance">Relevance</option>
-                            <option value="downloads">Downloads</option>
-                            <option value="follows">Followers</option>
-                            <option value="newest">Newest</option>
-                            <option value="updated">Recently updated</option>
-                        </select>
-                    </div>
-                    <div id="settingsUserModsError" role="alert"></div>
-                    <div id="settingsUserModsResults"></div>
-                    <div id="settingsUserModsDetails" hidden></div>
-                    <div class="settingsModsHeader settingsUserModsInstalledHeader">Installed personal mods <button id="settingsUserModsCheckUpdates" type="button">Check for mod updates</button> <button id="settingsUserModsUpdateAll" type="button">Update all</button></div>
-                    <div id="settingsUserModsInstalled"></div>
-                </div>
-                <div id="settingsDropinModsContainer">
-                    <div class="settingsModsHeader"><%- lang('settings.dropinMods') %></div>
-                    <button id="settingsDropinFileSystemButton"><%- lang('settings.addMods') %> <span id="settingsDropinRefreshNote"><%- lang('settings.dropinRefreshNote') %></span></button>
-                    <div id="settingsDropinModsContent">
-                        
-                    </div>
-                </div>
-                <div id="settingsShadersContainer">
-                    <div class="settingsModsHeader"><%- lang('settings.shaderpacks') %></div>
-                    <div id="settingsShaderpackDesc"><%- lang('settings.shaderpackDesc') %></div>
-                    <div id="settingsShaderpackWrapper">
-                        <button id="settingsShaderpackButton"> + </button>
-                        <div class="settingsSelectContainer">
-                            <div class="settingsSelectSelected" id="settingsShadersSelected"><%- lang('settings.selectShaderpack') %></div>
-                            <div class="settingsSelectOptions" id="settingsShadersOptions" hidden>
-
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

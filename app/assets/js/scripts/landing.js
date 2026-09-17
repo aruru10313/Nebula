@@ -202,13 +202,12 @@ document.getElementById('settingsMediaButton').onclick = async e => {
     switchView(getCurrentView(), VIEWS.settings)
 }
 
-// Bind mods quick-access button (jumps straight to Settings > Mods, avoiding
-// the extra step of opening Settings then hunting for the Mods tab).
+// Bind mods quick-access button (opens dedicated Mod Manager view)
 document.getElementById('modsMediaButton').onclick = async e => {
-    await prepareSettings()
-    switchView(getCurrentView(), VIEWS.settings, 500, 500, () => {
-        settingsNavItemListener(document.getElementById('settingsNavMods'), false)
-    })
+    if(typeof prepareMods === 'function') {
+        await prepareMods()
+    }
+    switchView(getCurrentView(), VIEWS.mods)
 }
 
 // Bind avatar overlay button.

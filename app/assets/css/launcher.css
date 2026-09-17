@@ -6228,3 +6228,569 @@ body::before { animation: none !important; }
 .settingsUserModCard {
     backdrop-filter: none;
 }
+
+/*******************************************************************************
+ *                                                                             *
+ * Nebula Modern UI System (Buttons, Tokens & Layout Alignments)               *
+ *                                                                             *
+ ******************************************************************************/
+
+:root {
+    --neb-font: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --neb-cyan: #00e5ff;
+    --neb-cyan-glow: rgba(0, 229, 255, 0.4);
+    --neb-purple: #9d4edd;
+    --neb-purple-glow: rgba(157, 78, 221, 0.4);
+    --neb-surface-dark: rgba(8, 11, 24, 0.85);
+    --neb-surface-card: rgba(16, 21, 42, 0.65);
+    --neb-surface-hover: rgba(26, 34, 66, 0.8);
+    --neb-border: rgba(255, 255, 255, 0.12);
+    --neb-border-glow: rgba(0, 229, 255, 0.35);
+    --neb-text: #f0f4fc;
+    --neb-text-muted: #8c9bb5;
+}
+
+/* Universal Button Styles */
+.nebula-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 18px;
+    background: linear-gradient(135deg, #00d2ff 0%, #00f2fe 50%, #9d4edd 100%);
+    color: #060913 !important;
+    font-family: var(--neb-font);
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px var(--neb-cyan-glow);
+    transition: all 0.22s cubic-bezier(.22, 1, .36, 1);
+    outline: none;
+}
+
+.nebula-btn-primary:hover:not(:disabled) {
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 20px rgba(0, 229, 255, 0.6);
+    filter: brightness(1.08);
+}
+
+.nebula-btn-primary:active:not(:disabled) {
+    transform: translateY(0.5px);
+    box-shadow: 0 2px 8px var(--neb-cyan-glow);
+}
+
+.nebula-btn-primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    filter: grayscale(0.4);
+}
+
+.nebula-btn-glass {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 16px;
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--neb-text) !important;
+    font-family: var(--neb-font);
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid var(--neb-border);
+    border-radius: 9px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.nebula-btn-glass:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+.nebula-btn-glass:active:not(:disabled) {
+    transform: translateY(0.5px);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nebula-btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 14px;
+    background: rgba(239, 68, 68, 0.18);
+    color: #fca5a5 !important;
+    font-family: var(--neb-font);
+    font-size: 12.5px;
+    font-weight: 600;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.nebula-btn-danger:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.32);
+    border-color: rgba(239, 68, 68, 0.6);
+    color: #ffffff !important;
+}
+
+/* Settings Nav Link to Mod Manager */
+.settingsNavModLink {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, rgba(157, 78, 221, 0.2), rgba(0, 229, 255, 0.15));
+    border: 1px solid rgba(157, 78, 221, 0.4);
+    border-radius: 9px;
+    color: #d8b4fe !important;
+    font-family: var(--neb-font);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    outline: none;
+}
+
+.settingsNavModLink:hover {
+    background: linear-gradient(135deg, rgba(157, 78, 221, 0.35), rgba(0, 229, 255, 0.28));
+    border-color: var(--neb-cyan);
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px var(--neb-purple-glow);
+    transform: translateY(-1px);
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Standalone Mod Manager View (mods.ejs)                                      *
+ *                                                                             *
+ ******************************************************************************/
+
+#modsContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 200;
+    background: radial-gradient(circle at 85% 12%, rgba(157, 78, 221, 0.18), transparent 38rem),
+                radial-gradient(circle at 15% 90%, rgba(0, 229, 255, 0.12), transparent 32rem),
+                rgba(7, 10, 25, 0.92);
+    backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: var(--neb-font);
+    border-radius: 16px;
+}
+
+#modsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 26px;
+    background: rgba(10, 14, 34, 0.65);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+}
+
+#modsHeaderLeft {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+#modsHeaderIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(157, 78, 221, 0.25));
+    border: 1px solid rgba(0, 229, 255, 0.4);
+    color: var(--neb-cyan);
+    box-shadow: 0 0 16px var(--neb-cyan-glow);
+}
+
+#modsHeaderTitle {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.3px;
+}
+
+#modsHeaderSubtitle {
+    font-size: 12px;
+    color: var(--neb-text-muted);
+    margin-top: 2px;
+}
+
+#modsHeaderRight {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Mod Navigation Pills */
+#modsNav {
+    display: flex;
+    gap: 10px;
+    padding: 12px 26px;
+    background: rgba(5, 8, 20, 0.45);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+}
+
+.modsNavItem {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    color: var(--neb-text-muted);
+    font-family: var(--neb-font);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.modsNavItem:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+.modsNavItem.selected {
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(157, 78, 221, 0.25));
+    border-color: var(--neb-cyan);
+    color: #ffffff;
+    box-shadow: 0 0 12px var(--neb-cyan-glow);
+}
+
+/* Tab Contents Area */
+.modsTabContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: 22px 28px 36px;
+}
+
+.modsTabContent::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modsTabContent::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modsTabContent::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 3px;
+}
+
+.modsTabContent::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 229, 255, 0.45);
+}
+
+.modsContentHeader {
+    margin-bottom: 18px;
+}
+
+.modsContentTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.modsContentDesc {
+    font-size: 12.5px;
+    color: var(--neb-text-muted);
+    margin-top: 4px;
+}
+
+/* Search Controls */
+#modsUserControls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+#modsUserSearchWrapper {
+    flex: 1 1 300px;
+}
+
+#modsUserSearchWrapper input {
+    width: 100%;
+    height: 40px;
+    padding: 0 16px;
+    background: rgba(14, 19, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 10px;
+    color: #ffffff;
+    font-family: var(--neb-font);
+    font-size: 13.5px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+#modsUserSearchWrapper input:focus {
+    border-color: var(--neb-cyan);
+    box-shadow: 0 0 14px var(--neb-cyan-glow);
+    background: rgba(18, 24, 52, 0.85);
+}
+
+#modsUserFilterWrapper {
+    display: flex;
+    gap: 10px;
+}
+
+#modsUserFilterWrapper select {
+    height: 40px;
+    padding: 0 14px;
+    background: rgba(14, 19, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 10px;
+    color: #ffffff;
+    font-family: var(--neb-font);
+    font-size: 13px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#modsUserFilterWrapper select:focus {
+    border-color: var(--neb-cyan);
+    box-shadow: 0 0 10px var(--neb-cyan-glow);
+}
+
+#settingsUserModsError {
+    min-height: 20px;
+    font-size: 12.5px;
+    color: #38bdf8;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.modsSubSectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.modsSubSectionBadge {
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: rgba(0, 229, 255, 0.12);
+    color: var(--neb-cyan);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+.modsBatchActions {
+    display: flex;
+    gap: 8px;
+}
+
+.modsBatchActions button {
+    height: 32px;
+    font-size: 12px;
+}
+
+/* Mod Cards Grid */
+#settingsUserModsResults,
+#settingsUserModsInstalled,
+.modsGridList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+}
+
+.settingsUserModCard,
+.settingsBaseMod {
+    background: rgba(14, 19, 42, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 14px 16px;
+    transition: all 0.22s ease;
+}
+
+.settingsUserModCard:hover,
+.settingsBaseMod:hover {
+    background: rgba(20, 28, 60, 0.7);
+    border-color: rgba(0, 229, 255, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.settingsUserModIcon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.settingsUserModTitle,
+.settingsModName {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.settingsUserModDesc {
+    font-size: 12px;
+    color: var(--neb-text-muted);
+    margin: 4px 0 8px;
+}
+
+.settingsUserModMeta {
+    display: flex;
+    gap: 12px;
+    font-size: 11.5px;
+    color: #7dd3fc;
+    margin-bottom: 10px;
+}
+
+.settingsUserModActions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.settingsUserModActions button {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 12px;
+}
+
+.settingsModLockBadge {
+    font-size: 11.5px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: rgba(157, 78, 221, 0.18);
+    color: #d8b4fe;
+    border: 1px solid rgba(157, 78, 221, 0.4);
+    font-weight: 600;
+}
+
+.modsEmptyNotice {
+    grid-column: 1 / -1;
+    padding: 28px;
+    text-align: center;
+    color: var(--neb-text-muted);
+    font-size: 13.5px;
+    background: rgba(14, 19, 42, 0.35);
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+}
+
+/* Mod Details Modal */
+#settingsUserModsDetails {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(650px, 90%);
+    max-height: 80vh;
+    background: rgba(11, 15, 33, 0.95);
+    border: 1px solid var(--neb-border-glow);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7), 0 0 30px var(--neb-cyan-glow);
+    border-radius: 16px;
+    padding: 24px;
+    z-index: 500;
+    overflow-y: auto;
+    backdrop-filter: blur(16px);
+}
+
+.settingsUserModsDetailsHeader {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.settingsUserModsDetailsHeader h3 {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+}
+
+.settingsUserModsDetailsHeader p {
+    font-size: 12.5px;
+    color: var(--neb-text-muted);
+    margin: 4px 0 0;
+}
+
+.settingsUserModsDetailsClose {
+    margin-left: auto;
+    height: 32px;
+}
+
+.settingsUserModsDetailsMeta {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    color: #38bdf8;
+    padding: 10px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 14px;
+}
+
+.settingsUserModsDetailsBody {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #cbd5e1;
+    white-space: pre-wrap;
+}
+
+/* Shader Cards */
+.modsShaderCard {
+    background: rgba(14, 19, 42, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.modsShaderRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.modsShaderLabel {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+#settingsShaderpackWrapper {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
